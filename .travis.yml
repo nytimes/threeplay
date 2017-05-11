@@ -7,4 +7,5 @@ go:
 install:
  - go get github.com/kyoh86/richgo
  - go get -t
-script: richgo test -v
+script: richgo test -v -coverprofile=coverage.txt -covermode=atomic
+after_success: bash <(curl -s https://codecov.io/bash)
