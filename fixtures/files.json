@@ -1,0 +1,61 @@
+{
+  "files": [
+    {
+      "id": 1678243,
+      "project_id": 23668,
+      "batch_id": 68841,
+      "duration": 33280,
+      "attribute1": "",
+      "attribute2": "",
+      "video_id": "",
+      "name": "72397_1_08macron-speech_wg_360p.mp4",
+      "attribute3": "",
+      "callback_url": "",
+      "description": "",
+      "created_at": "2017-05-09T16:31:28.000-04:00",
+      "updated_at": "2017-05-09T18:19:42.000-04:00",
+      "word_count": 0,
+      "thumbnail_url": null,
+      "language_id": 1,
+      "default_service_type_id": 1,
+      "downloaded": false,
+      "state": "in_progress",
+      "turnaround_level_id": 1,
+      "deadline": "2017-05-15T20:00:00.000-04:00",
+      "batch_name": "Default",
+      "error_description": ""
+    },
+    {
+      "id": 1684661,
+      "project_id": 23668,
+      "batch_id": 68841,
+      "duration": null,
+      "attribute1": "",
+      "attribute2": "",
+      "video_id": "100000005092473",
+      "name": "72456_1_fbi-director_wg_360p.mp4",
+      "attribute3": "",
+      "callback_url": "",
+      "description": "",
+      "created_at": "2017-05-11T16:03:09.000-04:00",
+      "updated_at": "2017-05-11T16:03:10.000-04:00",
+      "word_count": 0,
+      "thumbnail_url": null,
+      "language_id": 1,
+      "default_service_type_id": 1,
+      "downloaded": false,
+      "state": "in_progress",
+      "turnaround_level_id": 1,
+      "deadline": "2017-05-17T20:00:00.000-04:00",
+      "batch_name": "Default",
+      "error_description": ""
+    }
+  ],
+  "summary": {
+    "current_page": 1,
+    "per_page": 10,
+    "total_entries": 2,
+    "total_pages": 1
+  }
+}
+
