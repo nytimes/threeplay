@@ -108,7 +108,7 @@ func (c *Client) GetFile(id uint) (*File, error) {
 }
 
 //UploadFile uploads a file to threeplay using the file's URL.
-func (c *Client) UploadFile(fileURL string, options url.Values) (string, error) {
+func (c *Client) UploadFileFromURL(fileURL string, options url.Values) (string, error) {
 	endpoint := fmt.Sprintf("%s/files", ThreePlayHost)
 
 	data := url.Values{}

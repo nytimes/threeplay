@@ -42,7 +42,7 @@ func TestGetFile(t *testing.T) {
 	c.AssertExpectations(t)
 }
 
-func TestUploadFile(t *testing.T) {
+func TestUploadFileFromURL(t *testing.T) {
 	assert := assert.New(t)
 	c := &HTTPClientMock{}
 
@@ -61,6 +61,6 @@ func TestUploadFile(t *testing.T) {
 	data := url.Values{}
 	data.Set("video_id", "123456")
 
-	fileId, _ := client.UploadFile("https://somewhere.com/72397_1_08macron-speech_wg_360p.mp4", data)
-	assert.Equal("1686514", fileId)
+	fileID, _ := client.UploadFileFromURL("https://somewhere.com/72397_1_08macron-speech_wg_360p.mp4", data)
+	assert.Equal("1686514", fileID)
 }
