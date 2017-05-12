@@ -47,8 +47,8 @@ type Client struct {
 	client    HTTPClient
 }
 
-func NewClient(apiKey, apiSecret string) Client {
-	return Client{
+func NewClient(apiKey, apiSecret string) *Client {
+	return &Client{
 		apiKey:    apiKey,
 		apiSecret: apiSecret,
 		client: &http.Client{
@@ -57,8 +57,8 @@ func NewClient(apiKey, apiSecret string) Client {
 	}
 }
 
-func NewClientWithHTTPClient(apiKey, apiSecret string, client HTTPClient) Client {
-	return Client{
+func NewClientWithHTTPClient(apiKey, apiSecret string, client HTTPClient) *Client {
+	return &Client{
 		apiKey:    apiKey,
 		apiSecret: apiSecret,
 		client:    client,
@@ -72,7 +72,7 @@ type Error struct {
 	Errors  map[string]string `json:"errors"`
 }
 
-func (c Client) GetFile(id uint) (*File, error) {
+func (c *Client) GetFile(id uint) (*File, error) {
 	file := &File{}
 	apiError := &Error{}
 	endpoint := fmt.Sprintf("%s/files/%d?apikey=%s", ThreePlayHost, id, c.apiKey)
