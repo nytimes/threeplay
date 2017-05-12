@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -26,12 +27,40 @@ func (c *HTTPClientMock) Get(url string) (*http.Response, error) {
 	return args.Get(0).(*http.Response), nil
 }
 
+func (c *HTTPClientMock) PostForm(url string, data url.Values) (*http.Response, error) {
+	args := c.Called(url, data)
+	return args.Get(0).(*http.Response), nil
+}
+
 func TestGetFile(t *testing.T) {
 	c := &HTTPClientMock{}
 	expectedApiCall := "https://api.3playmedia.com/files/123456?apikey=api-key"
 	c.On("Get", expectedApiCall).Return(createResponseFromJsonFile("./fixtures/file.json"), nil)
-	client := NewClientWithHTTPClient("api-key", c)
+	client := NewClientWithHTTPClient("api-key", "", c)
 	file, _ := client.GetFile(123456)
 	assert.Equal(t, file.Name, "72397_1_08macron-speech_wg_360p.mp4")
 	c.AssertExpectations(t)
+}
+
+func TestUploadFile(t *testing.T) {
+	assert := assert.New(t)
+	c := &HTTPClientMock{}
+
+	expectedEndpoint := "https://api.3playmedia.com/files"
+	expectedData := url.Values{}
+	expectedData.Set("apikey", ":api-key")
+	expectedData.Set("api_secret_key", ":secret")
+	expectedData.Set("link", "https://somewhere.com/72397_1_08macron-speech_wg_360p.mp4")
+	expectedData.Set("video_id", "123456")
+
+	fakeResponse := &http.Response{
+		Body: ioutil.NopCloser(bytes.NewBufferString("1686514")),
+	}
+	c.On("PostForm", expectedEndpoint, expectedData).Return(fakeResponse, nil)
+	client := NewClientWithHTTPClient(":api-key", ":secret", c)
+	data := url.Values{}
+	data.Set("video_id", "123456")
+
+	fileId, _ := client.UploadFile("https://somewhere.com/72397_1_08macron-speech_wg_360p.mp4", data)
+	assert.Equal("1686514", fileId)
 }
