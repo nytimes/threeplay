@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+const ThreePlayHost = "api.3playmedia.com"
+
 type File struct {
 	ID                   uint   `json:"id"`
 	ProjectID            uint   `json:"project_id"`
@@ -59,6 +61,11 @@ type Client struct {
 	client    HTTPClient
 }
 
+type Error struct {
+	IsError bool              `json:"iserror"`
+	Errors  map[string]string `json:"errors"`
+}
+
 func NewClient(apiKey, apiSecret string) *Client {
 	return &Client{
 		apiKey:    apiKey,
@@ -75,13 +82,6 @@ func NewClientWithHTTPClient(apiKey, apiSecret string, client HTTPClient) *Clien
 		apiSecret: apiSecret,
 		client:    client,
 	}
-}
-
-const ThreePlayHost = "api.3playmedia.com"
-
-type Error struct {
-	IsError bool              `json:"iserror"`
-	Errors  map[string]string `json:"errors"`
 }
 
 func (c Client) buildUrl(endpoint string, querystring url.Values) string {
@@ -148,7 +148,6 @@ func (c Client) GetFiles(params ...url.Values) (*FilesPage, error) {
 func (c Client) GetFile(id uint) (*File, error) {
 	file := &File{}
 	endpoint := c.buildUrl(fmt.Sprintf("/files/%d", id), url.Values{})
-	fmt.Println(endpoint)
 	if err := c.fetchAndParse(endpoint, file); err != nil {
 		return nil, err
 	} else {
