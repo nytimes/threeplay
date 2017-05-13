@@ -1,0 +1,6 @@
+{
+  "iserror": true,
+  "errors": {
+    "authentication": "Could not authenticate API Access"
+  }
+}
