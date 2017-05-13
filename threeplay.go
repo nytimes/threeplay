@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -36,27 +37,31 @@ type File struct {
 }
 
 type HTTPClient interface {
-	Get(string) (resp *http.Response, err error)
+	Get(string) (*http.Response, error)
+	PostForm(string, url.Values) (*http.Response, error)
 }
 
 type Client struct {
-	apiKey string
-	client HTTPClient
+	apiKey    string
+	apiSecret string
+	client    HTTPClient
 }
 
-func NewClient(apiKey string) Client {
-	return Client{
-		apiKey: apiKey,
+func NewClient(apiKey, apiSecret string) *Client {
+	return &Client{
+		apiKey:    apiKey,
+		apiSecret: apiSecret,
 		client: &http.Client{
 			Timeout: time.Second * 10,
 		},
 	}
 }
 
-func NewClientWithHTTPClient(apiKey string, client HTTPClient) Client {
-	return Client{
-		apiKey: apiKey,
-		client: client,
+func NewClientWithHTTPClient(apiKey, apiSecret string, client HTTPClient) *Client {
+	return &Client{
+		apiKey:    apiKey,
+		apiSecret: apiSecret,
+		client:    client,
 	}
 }
 
@@ -67,7 +72,7 @@ type Error struct {
 	Errors  map[string]string `json:"errors"`
 }
 
-func (c Client) GetFile(id uint) (*File, error) {
+func (c *Client) GetFile(id uint) (*File, error) {
 	file := &File{}
 	apiError := &Error{}
 	endpoint := fmt.Sprintf("%s/files/%d?apikey=%s", ThreePlayHost, id, c.apiKey)
@@ -100,4 +105,36 @@ func (c Client) GetFile(id uint) (*File, error) {
 	}
 
 	return file, nil
+}
+
+//UploadFile uploads a file to threeplay using the file's URL.
+func (c *Client) UploadFileFromURL(fileURL string, options url.Values) (string, error) {
+	endpoint := fmt.Sprintf("%s/files", ThreePlayHost)
+
+	data := url.Values{}
+	data.Set("apikey", c.apiKey)
+	data.Set("api_secret_key", c.apiSecret)
+	data.Set("link", fileURL)
+
+	for key, val := range options {
+		data[key] = val
+	}
+
+	response, err := c.client.PostForm(endpoint, data)
+	if err != nil {
+		return "", err
+	}
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return "", err
+	}
+
+	apiError := &Error{}
+	json.Unmarshal(responseData, apiError)
+	if apiError.IsError {
+		return "", errors.New("API Error")
+	}
+
+	return string(responseData), nil
 }
