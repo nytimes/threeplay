@@ -138,23 +138,28 @@ func (c Client) GetFiles(params ...url.Values) (*FilesPage, error) {
 
 	filesPage := &FilesPage{}
 	endpoint := c.buildUrl("/files", querystring)
-	fmt.Println(endpoint)
-	err := c.fetchAndParse(endpoint, filesPage)
-	return filesPage, err
+	if err := c.fetchAndParse(endpoint, filesPage); err != nil {
+		return nil, err
+	} else {
+		return filesPage, nil
+	}
 }
 
 func (c Client) GetFile(id uint) (*File, error) {
 	file := &File{}
 	endpoint := c.buildUrl(fmt.Sprintf("/files/%d", id), url.Values{})
 	fmt.Println(endpoint)
-	err := c.fetchAndParse(endpoint, file)
+	if err := c.fetchAndParse(endpoint, file); err != nil {
+		return nil, err
+	} else {
+		return file, nil
+	}
 
-	return file, err
 }
 
 //UploadFile uploads a file to threeplay using the file's URL.
 func (c *Client) UploadFileFromURL(fileURL string, options url.Values) (string, error) {
-	endpoint := fmt.Sprintf("%s/files", ThreePlayHost)
+	endpoint := fmt.Sprintf("https://%s/files", ThreePlayHost)
 
 	data := url.Values{}
 	data.Set("apikey", c.apiKey)
