@@ -75,8 +75,8 @@ func TestGetFiles(t *testing.T) {
 	httpClient.On("Get", expectedApiCall).Return(createResponseFromJsonFile("./fixtures/files_page1.json"), nil)
 	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 
-	filesPage, _ := client.GetFiles()
-
+	filesPage, err := client.GetFiles(nil)
+	assert.Nil(err)
 	assert.Equal(len(filesPage.Files), 10)
 	assert.Equal(filesPage.Summary.CurrentPage.String(), "1")
 	assert.Equal(filesPage.Summary.PerPage.String(), "10")
@@ -91,7 +91,8 @@ func TestGetFilesWithPagination(t *testing.T) {
 	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 	querystring := url.Values{}
 	querystring.Add("page", "2")
-	filesPage, _ := client.GetFiles(querystring)
+	filesPage, err := client.GetFiles(querystring)
+	assert.Nil(err)
 	assert.Equal("2", filesPage.Summary.CurrentPage.String())
 	httpClient.AssertExpectations(t)
 }
