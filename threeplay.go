@@ -12,44 +12,6 @@ import (
 
 const ThreePlayHost = "api.3playmedia.com"
 
-type File struct {
-	ID                   uint   `json:"id"`
-	ProjectID            uint   `json:"project_id"`
-	BatchID              uint   `json:"batch_id"`
-	Duration             uint   `json:"duration"`
-	Attribute1           string `json:"attribute1"`
-	Attribute2           string `json:"attribute2"`
-	Attribute3           string `json:"attribute3"`
-	VideoID              string `json:"video_id"`
-	Name                 string `json:"name"`
-	CallbackURL          string `json:"callback_url"`
-	Description          string `json:"description"`
-	CreatedAt            string `json:"created_at"`
-	UpdatedAt            string `json:"updated_at"`
-	WordCount            uint   `json:"word_count"`
-	ThumbnailURL         string `json:"thumbnail_url"`
-	LanguageID           int    `json:"language_id"`
-	DefaultServiceTypeID int    `json:"default_service_type_id"`
-	Downloaded           bool   `json:"downloaded"`
-	State                string `json:"state"`
-	TurnaroundLevelID    int    `json:"turnaround_level_id"`
-	Deadline             string `json:"deadline"`
-	BatchName            string `json:"batch_name"`
-	ErrorDescription     string `json:"error_description"`
-}
-
-type FilesPage struct {
-	Files   []File `json:"files"`
-	Summary `json:"summary"`
-}
-
-type Summary struct {
-	CurrentPage  json.Number `json:"current_page"`
-	PerPage      json.Number `json:"per_page"`
-	TotalEntries json.Number `json:"total_entries"`
-	TotalPages   json.Number `json:"total_pages"`
-}
-
 type HTTPClient interface {
 	Get(string) (*http.Response, error)
 	PostForm(string, url.Values) (*http.Response, error)
@@ -130,19 +92,18 @@ func (c Client) fetchAndParse(endpoint string, ref interface{}) error {
 	return nil
 }
 
-func (c Client) GetFiles(params ...url.Values) (*FilesPage, error) {
+func (c Client) GetFiles(params url.Values) (*FilesPage, error) {
 	querystring := url.Values{}
-	if len(params) > 0 {
-		querystring = params[0]
+	if params != nil {
+		querystring = params
 	}
 
 	filesPage := &FilesPage{}
 	endpoint := c.buildUrl("/files", querystring)
 	if err := c.fetchAndParse(endpoint, filesPage); err != nil {
 		return nil, err
-	} else {
-		return filesPage, nil
 	}
+	return filesPage, nil
 }
 
 func (c Client) GetFile(id uint) (*File, error) {
@@ -150,10 +111,8 @@ func (c Client) GetFile(id uint) (*File, error) {
 	endpoint := c.buildUrl(fmt.Sprintf("/files/%d", id), url.Values{})
 	if err := c.fetchAndParse(endpoint, file); err != nil {
 		return nil, err
-	} else {
-		return file, nil
 	}
-
+	return file, nil
 }
 
 //UploadFile uploads a file to threeplay using the file's URL.
