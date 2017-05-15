@@ -92,7 +92,7 @@ func (c Client) fetchAndParse(endpoint string, ref interface{}) error {
 	return nil
 }
 
-func (c Client) GetFiles(params url.Values) (*FilesPage, error) {
+func (c *Client) GetFiles(params url.Values) (*FilesPage, error) {
 	querystring := url.Values{}
 	if params != nil {
 		querystring = params
@@ -106,7 +106,7 @@ func (c Client) GetFiles(params url.Values) (*FilesPage, error) {
 	return filesPage, nil
 }
 
-func (c Client) GetFile(id uint) (*File, error) {
+func (c *Client) GetFile(id uint) (*File, error) {
 	file := &File{}
 	endpoint := c.buildUrl(fmt.Sprintf("/files/%d", id), url.Values{})
 	if err := c.fetchAndParse(endpoint, file); err != nil {
