@@ -11,6 +11,15 @@ import (
 )
 
 const ThreePlayHost = "api.3playmedia.com"
+const ThreePlayStaticHost = "static.3playmedia.com"
+
+type OutputFormat string
+
+const (
+	JSON OutputFormat = "json"
+	TXT  OutputFormat = "txt"
+	HTML OutputFormat = "html"
+)
 
 type HTTPClient interface {
 	Get(string) (*http.Response, error)
