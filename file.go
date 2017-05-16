@@ -2,6 +2,7 @@ package threeplay
 
 import "encoding/json"
 
+// File representation
 type File struct {
 	ID                   uint   `json:"id"`
 	ProjectID            uint   `json:"project_id"`
@@ -28,11 +29,13 @@ type File struct {
 	ErrorDescription     string `json:"error_description"`
 }
 
+// FilesPage representation
 type FilesPage struct {
 	Files   []File `json:"files"`
 	Summary `json:"summary"`
 }
 
+// Summary representation
 type Summary struct {
 	CurrentPage  json.Number `json:"current_page"`
 	PerPage      json.Number `json:"per_page"`
