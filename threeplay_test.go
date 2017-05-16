@@ -85,6 +85,53 @@ func TestGetFiles(t *testing.T) {
 	httpClient.AssertExpectations(t)
 }
 
+func TestFilterFiles(t *testing.T) {
+	assert := assert.New(t)
+	filter := url.Values{
+		"video_id": []string{"123123"},
+		"state":    []string{"error"},
+	}
+	httpClient := &HTTPClientMock{}
+	expectedApiCall := "https://api.3playmedia.com/files?apikey=api-key&q=state%3Derror%26video_id%3D123123"
+	httpClient.On("Get", expectedApiCall).Return(createResponseFromJsonFile("./fixtures/files_page1.json"), nil)
+	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+
+	filesPage, err := client.FilterFiles(filter, nil)
+	assert.Nil(err)
+	assert.NotNil(filesPage)
+	assert.Equal(len(filesPage.Files), 10)
+
+	filesPage, err = client.FilterFiles(nil, nil)
+
+	assert.Nil(filesPage)
+	assert.Equal(err.Error(), "No filters specified")
+
+	httpClient.AssertExpectations(t)
+}
+
+func TestFilterFilesWithPagination(t *testing.T) {
+	assert := assert.New(t)
+	filter := url.Values{
+		"video_id": []string{"123123"},
+		"state":    []string{"error"},
+	}
+
+	pagination := url.Values{
+		"page":     []string{"2"},
+		"per_page": []string{"12"},
+	}
+	httpClient := &HTTPClientMock{}
+	expectedApiCall := "https://api.3playmedia.com/files?apikey=api-key&page=2&per_page=12&q=state%3Derror%26video_id%3D123123"
+	httpClient.On("Get", expectedApiCall).Return(createResponseFromJsonFile("./fixtures/files_page1.json"), nil)
+	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+
+	filesPage, err := client.FilterFiles(filter, pagination)
+	assert.Nil(err)
+	assert.NotNil(filesPage)
+	assert.Equal(len(filesPage.Files), 10)
+	httpClient.AssertExpectations(t)
+}
+
 func TestGetFilesWithPagination(t *testing.T) {
 	assert := assert.New(t)
 	httpClient := &HTTPClientMock{}

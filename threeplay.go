@@ -110,6 +110,30 @@ func (c Client) fetchAndParse(endpoint string, ref interface{}) error {
 	return nil
 }
 
+// FilterFiles filter files based on parameters
+func (c *Client) FilterFiles(filters url.Values, pagination url.Values) (*FilesPage, error) {
+
+	if filters == nil {
+		return nil, errors.New("No filters specified")
+	}
+
+	querystring := url.Values{}
+
+	for k, v := range pagination {
+		querystring[k] = v
+	}
+	filter := filters.Encode()
+
+	querystring.Add("q", filter)
+
+	endpoint := c.buildURL("/files", querystring)
+	filesPage := &FilesPage{}
+	if err := c.fetchAndParse(endpoint, filesPage); err != nil {
+		return nil, err
+	}
+	return filesPage, nil
+}
+
 // GetFiles returns a list of files, supports pagination through params
 func (c *Client) GetFiles(params url.Values) (*FilesPage, error) {
 	querystring := url.Values{}
