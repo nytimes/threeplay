@@ -46,7 +46,7 @@ func NewClientWithHTTPClient(apiKey, apiSecret string, client HTTPClient) *Clien
 	}
 }
 
-func (c Client) buildUrl(endpoint string, querystring url.Values) string {
+func (c Client) buildURL(endpoint string, querystring url.Values) string {
 	querystring.Add("apikey", c.apiKey)
 
 	url := url.URL{
@@ -99,7 +99,7 @@ func (c *Client) GetFiles(params url.Values) (*FilesPage, error) {
 	}
 
 	filesPage := &FilesPage{}
-	endpoint := c.buildUrl("/files", querystring)
+	endpoint := c.buildURL("/files", querystring)
 	if err := c.fetchAndParse(endpoint, filesPage); err != nil {
 		return nil, err
 	}
@@ -108,7 +108,7 @@ func (c *Client) GetFiles(params url.Values) (*FilesPage, error) {
 
 func (c *Client) GetFile(id uint) (*File, error) {
 	file := &File{}
-	endpoint := c.buildUrl(fmt.Sprintf("/files/%d", id), url.Values{})
+	endpoint := c.buildURL(fmt.Sprintf("/files/%d", id), url.Values{})
 	if err := c.fetchAndParse(endpoint, file); err != nil {
 		return nil, err
 	}

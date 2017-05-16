@@ -7,7 +7,7 @@ go:
 install:
 - go get github.com/kyoh86/richgo
 - go get -t
-script: richgo test -v -coverprofile=coverage.txt -covermode=atomic
+script: golint -set_exit_status && go test -v -coverprofile=coverage.txt -covermode=atomic
 after_success: bash <(curl -s https://codecov.io/bash)
 notifications:
   slack:
