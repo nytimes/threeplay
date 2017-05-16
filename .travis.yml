@@ -5,7 +5,7 @@ go:
 - 1.8.x
 - tip
 install:
-- go get github.com/kyoh86/richgo
+- go get github.com/golang/lint/golint
 - go get -t
 script: golint -set_exit_status && go test -v -coverprofile=coverage.txt -covermode=atomic
 after_success: bash <(curl -s https://codecov.io/bash)
