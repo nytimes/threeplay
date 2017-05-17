@@ -13,28 +13,32 @@ import (
 const threePlayHost = "api.3playmedia.com"
 const threePlayStaticHost = "static.3playmedia.com"
 
+// OutputFormat supported output formats for transcriptions
 type OutputFormat string
 
 const (
+	// JSON format for transcripted file
 	JSON OutputFormat = "json"
-	TXT  OutputFormat = "txt"
+	// TXT format output for transcripted file
+	TXT OutputFormat = "txt"
+	// HTML format output for transcripted file
 	HTML OutputFormat = "html"
 )
 
-// HTTPClient is a interface for http clients used in the 3Play client
+// HTTPClient interface for http clients used in the 3Play client
 type HTTPClient interface {
 	Get(string) (*http.Response, error)
 	PostForm(string, url.Values) (*http.Response, error)
 }
 
-// Client is a 3Play Media API client
+// Client 3Play Media API client
 type Client struct {
 	apiKey    string
 	apiSecret string
 	client    HTTPClient
 }
 
-// Error is a representation of 3Play API error
+// Error representation of 3Play API error
 type Error struct {
 	IsError bool              `json:"iserror"`
 	Errors  map[string]string `json:"errors"`
