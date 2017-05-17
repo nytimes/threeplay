@@ -1,12 +1,14 @@
-package threeplay
+package threeplay_test
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"testing"
 
+	"github.com/NYTimes/threeplay"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -37,7 +39,7 @@ func TestGetFile(t *testing.T) {
 	httpClient := &HTTPClientMock{}
 	expectedAPICall := "https://api.3playmedia.com/files/123456?apikey=api-key"
 	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/file.json"), nil)
-	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 	file, err := client.GetFile(123456)
 	assert.Equal(file.Name, "72397_1_08macron-speech_wg_360p.mp4")
 	assert.Nil(err)
@@ -49,7 +51,7 @@ func TestGetFileAPIError(t *testing.T) {
 	httpClient := &HTTPClientMock{}
 	expectedAPICall := "https://api.3playmedia.com/files/123456?apikey=api-key"
 	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/error.json"), nil)
-	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 	file, err := client.GetFile(123456)
 	assert.Equal(err.Error(), "API Error")
 	assert.Nil(file)
@@ -61,7 +63,7 @@ func TestGetFileError(t *testing.T) {
 	httpClient := &HTTPClientMock{}
 	expectedAPICall := "https://api.3playmedia.com/files/123456?apikey=api-key"
 	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/not_json"), nil)
-	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 	file, err := client.GetFile(123456)
 	assert.NotNil(err)
 	assert.Nil(file)
@@ -73,7 +75,7 @@ func TestGetFiles(t *testing.T) {
 	httpClient := &HTTPClientMock{}
 	expectedAPICall := "https://api.3playmedia.com/files?apikey=api-key"
 	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/files_page1.json"), nil)
-	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 
 	filesPage, err := client.GetFiles(nil)
 	assert.Nil(err)
@@ -88,7 +90,7 @@ func TestGetFilesWithPagination(t *testing.T) {
 	httpClient := &HTTPClientMock{}
 	expectedAPICall := "https://api.3playmedia.com/files?apikey=api-key&page=2"
 	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/files_page2.json"), nil)
-	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 	querystring := url.Values{}
 	querystring.Add("page", "2")
 	filesPage, err := client.GetFiles(querystring)
@@ -112,10 +114,34 @@ func TestUploadFileFromURL(t *testing.T) {
 		Body: ioutil.NopCloser(bytes.NewBufferString("1686514")),
 	}
 	c.On("PostForm", expectedEndpoint, expectedData).Return(fakeResponse, nil)
-	client := NewClientWithHTTPClient(":api-key", ":secret", c)
+	client := threeplay.NewClientWithHTTPClient(":api-key", ":secret", c)
 	data := url.Values{}
 	data.Set("video_id", "123456")
 
 	fileID, _ := client.UploadFileFromURL("https://somewhere.com/72397_1_08macron-speech_wg_360p.mp4", data)
 	assert.Equal("1686514", fileID)
+}
+
+func ExampleClient_GetFiles() {
+	client := threeplay.NewClient("api-key", "secret")
+	filesPage, _ := client.GetFiles(nil)
+	fmt.Println(filesPage.Files)
+
+	pagination, _ := url.ParseQuery("page=2&per_page=10")
+
+	filesPage, _ = client.GetFiles(pagination)
+	fmt.Println(filesPage.Files)
+}
+
+func ExampleClient_UploadFileFromURL() {
+	client := threeplay.NewClient("api-key", "secret")
+	data, _ := url.ParseQuery("video_id=123&attribute1=abc")
+	fileID, _ := client.UploadFileFromURL("http://somewhere.com/video.mp4", data)
+	fmt.Println(fileID)
+}
+
+func ExampleClient_GetTranscriptWithFormat() {
+	client := threeplay.NewClient("api-key", "secret")
+	transcript, _ := client.GetTranscriptWithFormat(123, threeplay.JSON)
+	fmt.Println(transcript)
 }

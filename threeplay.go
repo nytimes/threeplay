@@ -110,7 +110,7 @@ func (c Client) fetchAndParse(endpoint string, ref interface{}) error {
 	return nil
 }
 
-// GetFiles returns a list of files
+// GetFiles returns a list of files, supports pagination through params
 func (c *Client) GetFiles(params url.Values) (*FilesPage, error) {
 	querystring := url.Values{}
 	if params != nil {
@@ -125,7 +125,7 @@ func (c *Client) GetFiles(params url.Values) (*FilesPage, error) {
 	return filesPage, nil
 }
 
-// GetFile gets a single file by `file_id`
+// GetFile gets a single file by id
 func (c *Client) GetFile(id uint) (*File, error) {
 	file := &File{}
 	endpoint := c.buildURL(fmt.Sprintf("/files/%d", id), url.Values{})
