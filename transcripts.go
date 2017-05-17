@@ -32,7 +32,7 @@ func (c *Client) GetTranscript(fileID uint) (*Transcript, error) {
 
 func (c *Client) GetTranscriptWithFormat(id uint, format OutputFormat) ([]byte, error) {
 	endpoint := fmt.Sprintf("https://%s/files/%d/transcript.%s?apikey=%s",
-		ThreePlayStaticHost, id, format, c.apiKey,
+		threePlayStaticHost, id, format, c.apiKey,
 	)
 
 	response, err := c.client.Get(endpoint)
@@ -71,7 +71,7 @@ func (c *Client) GetTranscriptByVideoID(videoID string) (*Transcript, error) {
 
 func (c *Client) GetTranscriptByVideoIDWithFormat(id string, format OutputFormat) ([]byte, error) {
 	endpoint := fmt.Sprintf("https://%s/files/%s/transcript.%s?apikey=%s&usevideoid=1",
-		ThreePlayStaticHost, id, format, c.apiKey,
+		threePlayStaticHost, id, format, c.apiKey,
 	)
 
 	response, err := c.client.Get(endpoint)
