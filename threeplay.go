@@ -11,6 +11,15 @@ import (
 )
 
 const threePlayHost = "api.3playmedia.com"
+const threePlayStaticHost = "static.3playmedia.com"
+
+type OutputFormat string
+
+const (
+	JSON OutputFormat = "json"
+	TXT  OutputFormat = "txt"
+	HTML OutputFormat = "html"
+)
 
 // HTTPClient is a interface for http clients used in the 3Play client
 type HTTPClient interface {
