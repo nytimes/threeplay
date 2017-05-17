@@ -40,7 +40,7 @@ func (c *Client) GetTranscriptWithFormat(id uint, format OutputFormat) ([]byte, 
 		threePlayStaticHost, id, format, c.apiKey,
 	)
 
-	response, err := c.client.Get(endpoint)
+	response, err := c.HTTPClient.Get(endpoint)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +82,7 @@ func (c *Client) GetTranscriptByVideoIDWithFormat(id string, format OutputFormat
 		threePlayStaticHost, id, format, c.apiKey,
 	)
 
-	response, err := c.client.Get(endpoint)
+	response, err := c.HTTPClient.Get(endpoint)
 	if err != nil {
 		return nil, err
 	}
