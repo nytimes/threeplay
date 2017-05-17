@@ -111,6 +111,7 @@ func (c Client) fetchAndParse(endpoint string, ref interface{}) error {
 }
 
 // FilterFiles filter files based on parameters
+// for a full list of supported parameters check http://support.3playmedia.com/hc/en-us/articles/227729828-Files-API-Methods
 func (c *Client) FilterFiles(filters url.Values, pagination url.Values) (*FilesPage, error) {
 
 	if filters == nil {
