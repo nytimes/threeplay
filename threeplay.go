@@ -10,8 +10,8 @@ import (
 	"time"
 )
 
-const ThreePlayHost = "api.3playmedia.com"
-const ThreePlayStaticHost = "static.3playmedia.com"
+const threePlayHost = "api.3playmedia.com"
+const threePlayStaticHost = "static.3playmedia.com"
 
 type OutputFormat string
 
@@ -21,22 +21,26 @@ const (
 	HTML OutputFormat = "html"
 )
 
+// HTTPClient is a interface for http clients used in the 3Play client
 type HTTPClient interface {
 	Get(string) (*http.Response, error)
 	PostForm(string, url.Values) (*http.Response, error)
 }
 
+// Client is a 3Play Media API client
 type Client struct {
 	apiKey    string
 	apiSecret string
 	client    HTTPClient
 }
 
+// Error is a representation of 3Play API error
 type Error struct {
 	IsError bool              `json:"iserror"`
 	Errors  map[string]string `json:"errors"`
 }
 
+// NewClient returns a 3Play Media client
 func NewClient(apiKey, apiSecret string) *Client {
 	return &Client{
 		apiKey:    apiKey,
@@ -47,6 +51,7 @@ func NewClient(apiKey, apiSecret string) *Client {
 	}
 }
 
+// NewClientWithHTTPClient returns a 3Play Media client with a custom http client
 func NewClientWithHTTPClient(apiKey, apiSecret string, client HTTPClient) *Client {
 	return &Client{
 		apiKey:    apiKey,
@@ -55,12 +60,12 @@ func NewClientWithHTTPClient(apiKey, apiSecret string, client HTTPClient) *Clien
 	}
 }
 
-func (c Client) buildUrl(endpoint string, querystring url.Values) string {
+func (c Client) buildURL(endpoint string, querystring url.Values) string {
 	querystring.Add("apikey", c.apiKey)
 
 	url := url.URL{
 		Scheme:   "https",
-		Host:     ThreePlayHost,
+		Host:     threePlayHost,
 		Path:     endpoint,
 		RawQuery: querystring.Encode(),
 	}
@@ -101,6 +106,7 @@ func (c Client) fetchAndParse(endpoint string, ref interface{}) error {
 	return nil
 }
 
+// GetFiles returns a list of files
 func (c *Client) GetFiles(params url.Values) (*FilesPage, error) {
 	querystring := url.Values{}
 	if params != nil {
@@ -108,25 +114,26 @@ func (c *Client) GetFiles(params url.Values) (*FilesPage, error) {
 	}
 
 	filesPage := &FilesPage{}
-	endpoint := c.buildUrl("/files", querystring)
+	endpoint := c.buildURL("/files", querystring)
 	if err := c.fetchAndParse(endpoint, filesPage); err != nil {
 		return nil, err
 	}
 	return filesPage, nil
 }
 
+// GetFile gets a single file by `file_id`
 func (c *Client) GetFile(id uint) (*File, error) {
 	file := &File{}
-	endpoint := c.buildUrl(fmt.Sprintf("/files/%d", id), url.Values{})
+	endpoint := c.buildURL(fmt.Sprintf("/files/%d", id), url.Values{})
 	if err := c.fetchAndParse(endpoint, file); err != nil {
 		return nil, err
 	}
 	return file, nil
 }
 
-//UploadFile uploads a file to threeplay using the file's URL.
+// UploadFileFromURL uploads a file to threeplay using the file's URL.
 func (c *Client) UploadFileFromURL(fileURL string, options url.Values) (string, error) {
-	endpoint := fmt.Sprintf("https://%s/files", ThreePlayHost)
+	endpoint := fmt.Sprintf("https://%s/files", threePlayHost)
 
 	data := url.Values{}
 	data.Set("apikey", c.apiKey)

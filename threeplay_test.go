@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func createResponseFromJsonFile(jsonFile string) *http.Response {
+func createResponseFromJSONFile(jsonFile string) *http.Response {
 	file, _ := ioutil.ReadFile(jsonFile)
 	data := bytes.NewReader(file)
 	resp := http.Response{Body: ioutil.NopCloser(data)}
@@ -35,8 +35,8 @@ func (c *HTTPClientMock) PostForm(url string, data url.Values) (*http.Response, 
 func TestGetFile(t *testing.T) {
 	assert := assert.New(t)
 	httpClient := &HTTPClientMock{}
-	expectedApiCall := "https://api.3playmedia.com/files/123456?apikey=api-key"
-	httpClient.On("Get", expectedApiCall).Return(createResponseFromJsonFile("./fixtures/file.json"), nil)
+	expectedAPICall := "https://api.3playmedia.com/files/123456?apikey=api-key"
+	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/file.json"), nil)
 	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 	file, err := client.GetFile(123456)
 	assert.Equal(file.Name, "72397_1_08macron-speech_wg_360p.mp4")
@@ -44,11 +44,11 @@ func TestGetFile(t *testing.T) {
 	httpClient.AssertExpectations(t)
 }
 
-func TestGetFileApiError(t *testing.T) {
+func TestGetFileAPIError(t *testing.T) {
 	assert := assert.New(t)
 	httpClient := &HTTPClientMock{}
-	expectedApiCall := "https://api.3playmedia.com/files/123456?apikey=api-key"
-	httpClient.On("Get", expectedApiCall).Return(createResponseFromJsonFile("./fixtures/error.json"), nil)
+	expectedAPICall := "https://api.3playmedia.com/files/123456?apikey=api-key"
+	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/error.json"), nil)
 	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 	file, err := client.GetFile(123456)
 	assert.Equal(err.Error(), "API Error")
@@ -59,8 +59,8 @@ func TestGetFileApiError(t *testing.T) {
 func TestGetFileError(t *testing.T) {
 	assert := assert.New(t)
 	httpClient := &HTTPClientMock{}
-	expectedApiCall := "https://api.3playmedia.com/files/123456?apikey=api-key"
-	httpClient.On("Get", expectedApiCall).Return(createResponseFromJsonFile("./fixtures/not_json"), nil)
+	expectedAPICall := "https://api.3playmedia.com/files/123456?apikey=api-key"
+	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/not_json"), nil)
 	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 	file, err := client.GetFile(123456)
 	assert.NotNil(err)
@@ -71,8 +71,8 @@ func TestGetFileError(t *testing.T) {
 func TestGetFiles(t *testing.T) {
 	assert := assert.New(t)
 	httpClient := &HTTPClientMock{}
-	expectedApiCall := "https://api.3playmedia.com/files?apikey=api-key"
-	httpClient.On("Get", expectedApiCall).Return(createResponseFromJsonFile("./fixtures/files_page1.json"), nil)
+	expectedAPICall := "https://api.3playmedia.com/files?apikey=api-key"
+	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/files_page1.json"), nil)
 	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 
 	filesPage, err := client.GetFiles(nil)
@@ -86,8 +86,8 @@ func TestGetFiles(t *testing.T) {
 func TestGetFilesWithPagination(t *testing.T) {
 	assert := assert.New(t)
 	httpClient := &HTTPClientMock{}
-	expectedApiCall := "https://api.3playmedia.com/files?apikey=api-key&page=2"
-	httpClient.On("Get", expectedApiCall).Return(createResponseFromJsonFile("./fixtures/files_page2.json"), nil)
+	expectedAPICall := "https://api.3playmedia.com/files?apikey=api-key&page=2"
+	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/files_page2.json"), nil)
 	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 	querystring := url.Values{}
 	querystring.Add("page", "2")
