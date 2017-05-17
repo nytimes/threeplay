@@ -93,8 +93,8 @@ func TestFilterFiles(t *testing.T) {
 	}
 	httpClient := &HTTPClientMock{}
 	expectedApiCall := "https://api.3playmedia.com/files?apikey=api-key&q=state%3Derror%26video_id%3D123123"
-	httpClient.On("Get", expectedApiCall).Return(createResponseFromJsonFile("./fixtures/files_page1.json"), nil)
-	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+	httpClient.On("Get", expectedApiCall).Return(createResponseFromJSONFile("./fixtures/files_page1.json"), nil)
+	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 
 	filesPage, err := client.FilterFiles(filter, nil)
 	assert.Nil(err)
@@ -122,8 +122,8 @@ func TestFilterFilesWithPagination(t *testing.T) {
 	}
 	httpClient := &HTTPClientMock{}
 	expectedApiCall := "https://api.3playmedia.com/files?apikey=api-key&page=2&per_page=12&q=state%3Derror%26video_id%3D123123"
-	httpClient.On("Get", expectedApiCall).Return(createResponseFromJsonFile("./fixtures/files_page1.json"), nil)
-	client := NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+	httpClient.On("Get", expectedApiCall).Return(createResponseFromJSONFile("./fixtures/files_page1.json"), nil)
+	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 
 	filesPage, err := client.FilterFiles(filter, pagination)
 	assert.Nil(err)
