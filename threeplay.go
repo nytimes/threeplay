@@ -25,17 +25,11 @@ const (
 	HTML OutputFormat = "html"
 )
 
-// HTTPClient interface for http clients used in the 3Play client
-type HTTPClient interface {
-	Get(string) (*http.Response, error)
-	PostForm(string, url.Values) (*http.Response, error)
-}
-
 // Client 3Play Media API client
 type Client struct {
-	apiKey    string
-	apiSecret string
-	client    HTTPClient
+	apiKey     string
+	apiSecret  string
+	HTTPClient *http.Client
 }
 
 // Error representation of 3Play API error
@@ -49,18 +43,18 @@ func NewClient(apiKey, apiSecret string) *Client {
 	return &Client{
 		apiKey:    apiKey,
 		apiSecret: apiSecret,
-		client: &http.Client{
+		HTTPClient: &http.Client{
 			Timeout: time.Second * 10,
 		},
 	}
 }
 
 // NewClientWithHTTPClient returns a 3Play Media client with a custom http client
-func NewClientWithHTTPClient(apiKey, apiSecret string, client HTTPClient) *Client {
+func NewClientWithHTTPClient(apiKey, apiSecret string, client *http.Client) *Client {
 	return &Client{
-		apiKey:    apiKey,
-		apiSecret: apiSecret,
-		client:    client,
+		apiKey:     apiKey,
+		apiSecret:  apiSecret,
+		HTTPClient: client,
 	}
 }
 
@@ -79,7 +73,7 @@ func (c Client) buildURL(endpoint string, querystring url.Values) string {
 
 func (c Client) fetchAndParse(endpoint string, ref interface{}) error {
 	apiError := &Error{}
-	response, err := c.client.Get(endpoint)
+	response, err := c.HTTPClient.Get(endpoint)
 
 	if err != nil {
 		return err
@@ -173,7 +167,7 @@ func (c *Client) UploadFileFromURL(fileURL string, options url.Values) (string, 
 		data[key] = val
 	}
 
-	response, err := c.client.PostForm(endpoint, data)
+	response, err := c.HTTPClient.PostForm(endpoint, data)
 	if err != nil {
 		return "", err
 	}

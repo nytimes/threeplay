@@ -1,100 +1,105 @@
 package threeplay_test
 
 import (
-	"bytes"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"net/url"
 	"testing"
 
 	"github.com/NYTimes/threeplay"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
+	"gopkg.in/h2non/gock.v1"
 )
-
-func createResponseFromJSONFile(jsonFile string) *http.Response {
-	file, _ := ioutil.ReadFile(jsonFile)
-	data := bytes.NewReader(file)
-	resp := http.Response{Body: ioutil.NopCloser(data)}
-	return &resp
-}
-
-type HTTPClientMock struct {
-	mock.Mock
-}
-
-func (c *HTTPClientMock) Get(url string) (*http.Response, error) {
-	args := c.Called(url)
-	return args.Get(0).(*http.Response), nil
-}
-
-func (c *HTTPClientMock) PostForm(url string, data url.Values) (*http.Response, error) {
-	args := c.Called(url, data)
-	return args.Get(0).(*http.Response), nil
-}
 
 func TestGetFile(t *testing.T) {
 	assert := assert.New(t)
-	httpClient := &HTTPClientMock{}
-	expectedAPICall := "https://api.3playmedia.com/files/123456?apikey=api-key"
-	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/file.json"), nil)
-	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+
+	defer gock.Off()
+	gock.New("https://api.3playmedia.com").
+		Get("/files/123456").
+		MatchParam("apikey", "api-key").
+		Reply(200).
+		File("./fixtures/file.json")
+
+	client := threeplay.NewClient("api-key", "secret-key")
+	gock.InterceptClient(client.HTTPClient)
 	file, err := client.GetFile(123456)
 	assert.Equal(file.Name, "72397_1_08macron-speech_wg_360p.mp4")
 	assert.Nil(err)
-	httpClient.AssertExpectations(t)
 }
 
 func TestGetFileAPIError(t *testing.T) {
 	assert := assert.New(t)
-	httpClient := &HTTPClientMock{}
-	expectedAPICall := "https://api.3playmedia.com/files/123456?apikey=api-key"
-	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/error.json"), nil)
-	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+
+	defer gock.Off()
+	gock.New("https://api.3playmedia.com").
+		Get("/files/123456").
+		MatchParam("apikey", "api-key").
+		Reply(200).
+		File("./fixtures/error.json")
+
+	client := threeplay.NewClient("api-key", "secret-key")
+	gock.InterceptClient(client.HTTPClient)
+
 	file, err := client.GetFile(123456)
 	assert.Equal(err.Error(), "API Error")
 	assert.Nil(file)
-	httpClient.AssertExpectations(t)
 }
 
 func TestGetFileError(t *testing.T) {
 	assert := assert.New(t)
-	httpClient := &HTTPClientMock{}
-	expectedAPICall := "https://api.3playmedia.com/files/123456?apikey=api-key"
-	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/not_json"), nil)
-	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+
+	defer gock.Off()
+	gock.New("https://api.3playmedia.com").
+		Get("/files/123456").
+		MatchParam("apikey", "api-key").
+		Reply(200).
+		File("./fixtures/not_json")
+
+	client := threeplay.NewClient("api-key", "secret-key")
+	gock.InterceptClient(client.HTTPClient)
+
 	file, err := client.GetFile(123456)
 	assert.NotNil(err)
 	assert.Nil(file)
-	httpClient.AssertExpectations(t)
 }
 
 func TestGetFiles(t *testing.T) {
 	assert := assert.New(t)
-	httpClient := &HTTPClientMock{}
-	expectedAPICall := "https://api.3playmedia.com/files?apikey=api-key"
-	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/files_page1.json"), nil)
-	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+
+	defer gock.Off()
+	gock.New("https://api.3playmedia.com").
+		Get("/files").
+		MatchParam("apikey", "api-key").
+		Reply(200).
+		File("./fixtures/files_page1.json")
+
+	client := threeplay.NewClient("api-key", "secret-key")
+	gock.InterceptClient(client.HTTPClient)
 
 	filesPage, err := client.GetFiles(nil)
 	assert.Nil(err)
 	assert.Equal(len(filesPage.Files), 10)
 	assert.Equal(filesPage.Summary.CurrentPage.String(), "1")
 	assert.Equal(filesPage.Summary.PerPage.String(), "10")
-	httpClient.AssertExpectations(t)
 }
 
 func TestFilterFiles(t *testing.T) {
 	assert := assert.New(t)
+	defer gock.Off()
+	gock.New("https://api.3playmedia.com").
+		Get("/files").
+		MatchParam("apikey", "api-key").
+		MatchParam("q", "state=error&video_id=123123").
+		Reply(200).
+		File("./fixtures/files_page1.json")
+
+	client := threeplay.NewClient("api-key", "secret-key")
+	gock.InterceptClient(client.HTTPClient)
+
 	filter := url.Values{
 		"video_id": []string{"123123"},
 		"state":    []string{"error"},
 	}
-	httpClient := &HTTPClientMock{}
-	expectedApiCall := "https://api.3playmedia.com/files?apikey=api-key&q=state%3Derror%26video_id%3D123123"
-	httpClient.On("Get", expectedApiCall).Return(createResponseFromJSONFile("./fixtures/files_page1.json"), nil)
-	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 
 	filesPage, err := client.FilterFiles(filter, nil)
 	assert.Nil(err)
@@ -102,15 +107,25 @@ func TestFilterFiles(t *testing.T) {
 	assert.Equal(len(filesPage.Files), 10)
 
 	filesPage, err = client.FilterFiles(nil, nil)
-
 	assert.Nil(filesPage)
 	assert.Equal(err.Error(), "No filters specified")
-
-	httpClient.AssertExpectations(t)
 }
 
 func TestFilterFilesWithPagination(t *testing.T) {
 	assert := assert.New(t)
+	defer gock.Off()
+	gock.New("https://api.3playmedia.com").
+		Get("/files").
+		MatchParam("apikey", "api-key").
+		MatchParam("page", "2").
+		MatchParam("per_page", "12").
+		MatchParam("q", "state=error&video_id=123123").
+		Reply(200).
+		File("./fixtures/files_page1.json")
+
+	client := threeplay.NewClient("api-key", "secret-key")
+	gock.InterceptClient(client.HTTPClient)
+
 	filter := url.Values{
 		"video_id": []string{"123123"},
 		"state":    []string{"error"},
@@ -120,53 +135,53 @@ func TestFilterFilesWithPagination(t *testing.T) {
 		"page":     []string{"2"},
 		"per_page": []string{"12"},
 	}
-	httpClient := &HTTPClientMock{}
-	expectedApiCall := "https://api.3playmedia.com/files?apikey=api-key&page=2&per_page=12&q=state%3Derror%26video_id%3D123123"
-	httpClient.On("Get", expectedApiCall).Return(createResponseFromJSONFile("./fixtures/files_page1.json"), nil)
-	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
 
 	filesPage, err := client.FilterFiles(filter, pagination)
 	assert.Nil(err)
 	assert.NotNil(filesPage)
 	assert.Equal(len(filesPage.Files), 10)
-	httpClient.AssertExpectations(t)
 }
 
 func TestGetFilesWithPagination(t *testing.T) {
 	assert := assert.New(t)
-	httpClient := &HTTPClientMock{}
-	expectedAPICall := "https://api.3playmedia.com/files?apikey=api-key&page=2"
-	httpClient.On("Get", expectedAPICall).Return(createResponseFromJSONFile("./fixtures/files_page2.json"), nil)
-	client := threeplay.NewClientWithHTTPClient("api-key", "secret-key", httpClient)
+
+	defer gock.Off()
+	gock.New("https://api.3playmedia.com").
+		Get("/files").
+		MatchParam("apikey", "api-key").
+		MatchParam("page", "2").
+		Reply(200).
+		File("./fixtures/files_page2.json")
+
+	client := threeplay.NewClient("api-key", "secret-key")
+	gock.InterceptClient(client.HTTPClient)
 	querystring := url.Values{}
 	querystring.Add("page", "2")
+
 	filesPage, err := client.GetFiles(querystring)
 	assert.Nil(err)
 	assert.Equal("2", filesPage.Summary.CurrentPage.String())
-	httpClient.AssertExpectations(t)
 }
 
 func TestUploadFileFromURL(t *testing.T) {
 	assert := assert.New(t)
-	c := &HTTPClientMock{}
 
-	expectedEndpoint := "https://api.3playmedia.com/files"
-	expectedData := url.Values{}
-	expectedData.Set("apikey", ":api-key")
-	expectedData.Set("api_secret_key", ":secret")
-	expectedData.Set("link", "https://somewhere.com/72397_1_08macron-speech_wg_360p.mp4")
-	expectedData.Set("video_id", "123456")
+	defer gock.Off()
+	gock.New("https://api.3playmedia.com").
+		Post("/files").
+		MatchType("url").
+		BodyString("api_secret_key=secret-key&apikey=api-key&link=https%3A%2F%2Fsomewhere.com%2F72397_1_08macron-speech_wg_360p.mp4&video_id=123456").
+		Reply(200).
+		BodyString("1686514")
 
-	fakeResponse := &http.Response{
-		Body: ioutil.NopCloser(bytes.NewBufferString("1686514")),
-	}
-	c.On("PostForm", expectedEndpoint, expectedData).Return(fakeResponse, nil)
-	client := threeplay.NewClientWithHTTPClient(":api-key", ":secret", c)
+	client := threeplay.NewClient("api-key", "secret-key")
+	gock.InterceptClient(client.HTTPClient)
 	data := url.Values{}
 	data.Set("video_id", "123456")
 
-	fileID, _ := client.UploadFileFromURL("https://somewhere.com/72397_1_08macron-speech_wg_360p.mp4", data)
+	fileID, err := client.UploadFileFromURL("https://somewhere.com/72397_1_08macron-speech_wg_360p.mp4", data)
 	assert.Equal("1686514", fileID)
+	assert.Nil(err)
 }
 
 func ExampleClient_GetFiles() {
