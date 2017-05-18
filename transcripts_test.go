@@ -21,7 +21,6 @@ func TestGetTranscriptWithFormat(t *testing.T) {
 		BodyString(expectedResult)
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
 	result, err := client.GetTranscriptWithFormat(123456, threeplay.TXT)
 	assert.Equal(expectedResult, string(result))
 	assert.Nil(err)
@@ -38,7 +37,6 @@ func TestGetTranscriptWithFormatApiError(t *testing.T) {
 		File("./fixtures/error.json")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
 	result, err := client.GetTranscriptWithFormat(123456, threeplay.TXT)
 	assert.Nil(result)
 	assert.NotNil(err)
@@ -56,8 +54,6 @@ func TestGetTranscript(t *testing.T) {
 		File("./fixtures/transcript.json")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
-
 	transcript, err := client.GetTranscript(123456)
 	assert.NotNil(transcript)
 	assert.Nil(err)
@@ -74,8 +70,6 @@ func TestGetTranscriptApiError(t *testing.T) {
 		File("./fixtures/error.json")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
-
 	transcript, err := client.GetTranscript(123456)
 	assert.Nil(transcript)
 	assert.NotNil(err)
@@ -94,8 +88,6 @@ func TestGetTranscriptByVideoID(t *testing.T) {
 		File("./fixtures/transcript.json")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
-
 	transcript, err := client.GetTranscriptByVideoID("123456")
 	assert.NotNil(transcript)
 	assert.Nil(err)
@@ -113,8 +105,6 @@ func TestGetTranscriptByVideoIDApiError(t *testing.T) {
 		File("./fixtures/error.json")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
-
 	transcript, err := client.GetTranscriptByVideoID("123456")
 	assert.Nil(transcript)
 	assert.NotNil(err)
@@ -135,7 +125,6 @@ func TestGetTranscriptByVideoIDWithFormat(t *testing.T) {
 		BodyString(expectedResult)
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
 	result, err := client.GetTranscriptByVideoIDWithFormat("123456", threeplay.TXT)
 	assert.Equal(expectedResult, string(result))
 	assert.Nil(err)
@@ -153,7 +142,6 @@ func TestGetTranscriptByVideoIDtWithFormatApiError(t *testing.T) {
 		File("./fixtures/error.json")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
 	result, err := client.GetTranscriptByVideoIDWithFormat("123456", threeplay.TXT)
 	assert.Nil(result)
 	assert.NotNil(err)
