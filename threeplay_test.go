@@ -21,7 +21,6 @@ func TestGetFile(t *testing.T) {
 		File("./fixtures/file.json")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
 	file, err := client.GetFile(123456)
 	assert.Equal(file.Name, "72397_1_08macron-speech_wg_360p.mp4")
 	assert.Nil(err)
@@ -38,7 +37,6 @@ func TestGetFileAPIError(t *testing.T) {
 		File("./fixtures/error.json")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
 
 	file, err := client.GetFile(123456)
 	assert.Equal(err.Error(), "API Error")
@@ -56,7 +54,6 @@ func TestGetFileError(t *testing.T) {
 		File("./fixtures/not_json")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
 
 	file, err := client.GetFile(123456)
 	assert.NotNil(err)
@@ -74,7 +71,6 @@ func TestGetFiles(t *testing.T) {
 		File("./fixtures/files_page1.json")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
 
 	filesPage, err := client.GetFiles(nil)
 	assert.Nil(err)
@@ -94,7 +90,6 @@ func TestFilterFiles(t *testing.T) {
 		File("./fixtures/files_page1.json")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
 
 	filter := url.Values{
 		"video_id": []string{"123123"},
@@ -124,7 +119,6 @@ func TestFilterFilesWithPagination(t *testing.T) {
 		File("./fixtures/files_page1.json")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
 
 	filter := url.Values{
 		"video_id": []string{"123123"},
@@ -154,7 +148,6 @@ func TestGetFilesWithPagination(t *testing.T) {
 		File("./fixtures/files_page2.json")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
 	querystring := url.Values{}
 	querystring.Add("page", "2")
 
@@ -175,7 +168,6 @@ func TestUploadFileFromURL(t *testing.T) {
 		BodyString("1686514")
 
 	client := threeplay.NewClient("api-key", "secret-key")
-	gock.InterceptClient(client.HTTPClient)
 	data := url.Values{}
 	data.Set("video_id", "123456")
 
