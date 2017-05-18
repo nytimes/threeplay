@@ -29,7 +29,7 @@ const (
 type Client struct {
 	apiKey     string
 	apiSecret  string
-	HTTPClient *http.Client
+	httpClient *http.Client
 }
 
 // Error representation of 3Play API error
@@ -43,7 +43,7 @@ func NewClient(apiKey, apiSecret string) *Client {
 	return &Client{
 		apiKey:    apiKey,
 		apiSecret: apiSecret,
-		HTTPClient: &http.Client{
+		httpClient: &http.Client{
 			Timeout: time.Second * 10,
 		},
 	}
@@ -54,7 +54,7 @@ func NewClientWithHTTPClient(apiKey, apiSecret string, client *http.Client) *Cli
 	return &Client{
 		apiKey:     apiKey,
 		apiSecret:  apiSecret,
-		HTTPClient: client,
+		httpClient: client,
 	}
 }
 
@@ -73,7 +73,7 @@ func (c Client) buildURL(endpoint string, querystring url.Values) string {
 
 func (c Client) fetchAndParse(endpoint string, ref interface{}) error {
 	apiError := &Error{}
-	response, err := c.HTTPClient.Get(endpoint)
+	response, err := c.httpClient.Get(endpoint)
 
 	if err != nil {
 		return err
@@ -167,7 +167,7 @@ func (c *Client) UploadFileFromURL(fileURL string, options url.Values) (string, 
 		data[key] = val
 	}
 
-	response, err := c.HTTPClient.PostForm(endpoint, data)
+	response, err := c.httpClient.PostForm(endpoint, data)
 	if err != nil {
 		return "", err
 	}
