@@ -13,18 +13,6 @@ import (
 const threePlayHost = "api.3playmedia.com"
 const threePlayStaticHost = "static.3playmedia.com"
 
-// OutputFormat supported output formats for transcriptions
-type OutputFormat string
-
-const (
-	// JSON format for transcripted file
-	JSON OutputFormat = "json"
-	// TXT format output for transcripted file
-	TXT OutputFormat = "txt"
-	// HTML format output for transcripted file
-	HTML OutputFormat = "html"
-)
-
 // Client 3Play Media API client
 type Client struct {
 	apiKey     string
