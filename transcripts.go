@@ -7,6 +7,18 @@ import (
 	"io/ioutil"
 )
 
+// TranscriptFormat supported output formats for transcripts
+type TranscriptFormat string
+
+const (
+	// JSON format for transcripted file
+	JSON TranscriptFormat = "json"
+	// TXT format output for transcripted file
+	TXT TranscriptFormat = "txt"
+	// HTML format output for transcripted file
+	HTML TranscriptFormat = "html"
+)
+
 // Word words
 type Word [2]string
 
@@ -35,7 +47,7 @@ func (c *Client) GetTranscript(fileID uint) (*Transcript, error) {
 
 // GetTranscriptWithFormat get transcript by file ID with supported formats
 // current supported formats are json, text and html
-func (c *Client) GetTranscriptWithFormat(id uint, format OutputFormat) ([]byte, error) {
+func (c *Client) GetTranscriptWithFormat(id uint, format TranscriptFormat) ([]byte, error) {
 	endpoint := fmt.Sprintf("https://%s/files/%d/transcript.%s?apikey=%s",
 		threePlayStaticHost, id, format, c.apiKey,
 	)
@@ -77,7 +89,7 @@ func (c *Client) GetTranscriptByVideoID(videoID string) (*Transcript, error) {
 
 // GetTranscriptByVideoIDWithFormat get transcript by video ID with specific format
 // current supported formats are json, text and html
-func (c *Client) GetTranscriptByVideoIDWithFormat(id string, format OutputFormat) ([]byte, error) {
+func (c *Client) GetTranscriptByVideoIDWithFormat(id string, format TranscriptFormat) ([]byte, error) {
 	endpoint := fmt.Sprintf("https://%s/files/%s/transcript.%s?apikey=%s&usevideoid=1",
 		threePlayStaticHost, id, format, c.apiKey,
 	)
