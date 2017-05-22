@@ -1,6 +1,14 @@
 package threeplay
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+	"strings"
+)
 
 // File representation
 type File struct {
@@ -41,4 +49,46 @@ type Summary struct {
 	PerPage      json.Number `json:"per_page"`
 	TotalEntries json.Number `json:"total_entries"`
 	TotalPages   json.Number `json:"total_pages"`
+}
+
+// UpdateFile updates a File metadata
+func (c *Client) UpdateFile(fileID uint, data url.Values) error {
+	if data == nil {
+		return errors.New("Must specify new data")
+	}
+
+	data.Set("apikey", c.apiKey)
+	data.Set("api_secret_key", c.apiSecret)
+
+	body := strings.NewReader(data.Encode())
+
+	req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("https://%s/files/%d", threePlayHost, fileID), body)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	if err != nil {
+		return err
+	}
+	response, err := c.httpClient.Do(req)
+
+	responseData, err := ioutil.ReadAll(response.Body)
+
+	if err != nil {
+		return err
+	}
+
+	// the API returns "1" on success
+	if string(responseData) == "1" {
+		return nil
+	}
+
+	apiError := &Error{}
+	err = json.Unmarshal(responseData, apiError)
+	if err != nil {
+		return err
+	}
+
+	if apiError.IsError {
+		return errors.New("Api Error")
+	}
+
+	return nil
 }
