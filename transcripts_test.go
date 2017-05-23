@@ -1,6 +1,7 @@
 package threeplay_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/NYTimes/threeplay"
@@ -146,4 +147,10 @@ func TestGetTranscriptByVideoIDtWithFormatApiError(t *testing.T) {
 	assert.Nil(result)
 	assert.NotNil(err)
 	assert.Equal(err.Error(), "API Error")
+}
+
+func ExampleClient_GetTranscriptWithFormat() {
+	client := threeplay.NewClient("api-key", "secret")
+	transcript, _ := client.GetTranscriptWithFormat(123, threeplay.JSON)
+	fmt.Println(transcript)
 }
