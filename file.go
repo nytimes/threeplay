@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strings"
 )
 
 // File representation
@@ -56,39 +55,81 @@ func (c *Client) UpdateFile(fileID uint, data url.Values) error {
 	if data == nil {
 		return errors.New("Must specify new data")
 	}
-
+	apiURL := c.createURL(fmt.Sprintf("/files/%d", fileID))
 	data.Set("apikey", c.apiKey)
 	data.Set("api_secret_key", c.apiSecret)
-
-	body := strings.NewReader(data.Encode())
-
-	req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("https://%s/files/%d", threePlayHost, fileID), body)
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req, err := c.createRequest(http.MethodPut, apiURL.String(), data)
 	if err != nil {
 		return err
 	}
 	response, err := c.httpClient.Do(req)
-
 	responseData, err := ioutil.ReadAll(response.Body)
-
 	if err != nil {
 		return err
 	}
+	return checkForAPIError(responseData)
+}
 
-	// the API returns "1" on success
-	if string(responseData) == "1" {
-		return nil
+// GetFiles returns a list of files, supports pagination through params
+// and filters.
+// For a full list of supported filtering parameters check http://support.3playmedia.com/hc/en-us/articles/227729828-Files-API-Methods
+func (c *Client) GetFiles(params, filters url.Values) (*FilesPage, error) {
+	querystring := url.Values{}
+	if params != nil {
+		querystring = params
 	}
-
-	apiError := &Error{}
-	err = json.Unmarshal(responseData, apiError)
+	if filters != nil {
+		querystring.Set("q", filters.Encode())
+	}
+	filesPage := &FilesPage{}
+	url := c.createURL("/files")
+	endpoint := c.prepareURL(url, querystring)
+	res, err := c.httpClient.Get(endpoint)
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	if apiError.IsError {
-		return errors.New("Api Error")
+	if err := parseResponse(res, filesPage); err != nil {
+		return nil, err
 	}
+	return filesPage, nil
+}
 
-	return nil
+// GetFile gets a single file by id
+func (c *Client) GetFile(id uint) (*File, error) {
+	file := &File{}
+	url := c.createURL(fmt.Sprintf("/files/%d", id))
+	endpoint := c.prepareURL(url, nil)
+	res, err := c.httpClient.Get(endpoint)
+	if err != nil {
+		return nil, err
+	}
+	if err := parseResponse(res, file); err != nil {
+		return nil, err
+	}
+	return file, nil
+}
+
+// UploadFileFromURL uploads a file to threeplay using the file's URL.
+func (c *Client) UploadFileFromURL(fileURL string, options url.Values) (string, error) {
+	apiURL := c.createURL("/files")
+	data := url.Values{}
+	data.Set("apikey", c.apiKey)
+	data.Set("api_secret_key", c.apiSecret)
+	data.Set("link", fileURL)
+	for key, val := range options {
+		data[key] = val
+	}
+	res, err := c.httpClient.PostForm(apiURL.String(), data)
+	if err != nil {
+		return "", err
+	}
+	responseData, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return "", err
+	}
+	err = checkForAPIError(responseData)
+	if err != nil {
+		return "", err
+	}
+	return string(responseData), nil
 }
