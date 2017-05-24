@@ -2,7 +2,6 @@ package threeplay
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 )
@@ -62,10 +61,8 @@ func (c *Client) GetTranscriptWithFormat(id uint, format TranscriptFormat) ([]by
 		return nil, err
 	}
 
-	apiError := &Error{}
-	json.Unmarshal(responseData, apiError)
-	if apiError.IsError {
-		return nil, errors.New("API Error")
+	if err := checkForAPIError(responseData); err != nil {
+		return nil, err
 	}
 
 	return responseData, nil
@@ -104,11 +101,8 @@ func (c *Client) GetTranscriptByVideoIDWithFormat(id string, format TranscriptFo
 		return nil, err
 	}
 
-	apiError := &Error{}
-	json.Unmarshal(responseData, apiError)
-	if apiError.IsError {
-		return nil, errors.New("API Error")
+	if err := checkForAPIError(responseData); err != nil {
+		return nil, err
 	}
-
 	return responseData, nil
 }

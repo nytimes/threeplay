@@ -1,10 +1,8 @@
 package threeplay
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/url"
 )
 
@@ -17,20 +15,8 @@ func (c *Client) GetTags(fileID uint) ([]string, error) {
 		return nil, err
 	}
 
-	responseData, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	apiError := &Error{}
-	err = json.Unmarshal(responseData, apiError)
-	if err == nil && apiError.IsError {
-		return nil, errors.New("Api Error")
-	}
-
 	var tags []string
-	err = json.Unmarshal(responseData, &tags)
-	if err != nil {
+	if err := parseResponse(response, &tags); err != nil {
 		return nil, err
 	}
 
@@ -56,20 +42,8 @@ func (c *Client) AddTag(fileID uint, tag string) ([]string, error) {
 		return nil, err
 	}
 
-	responseData, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	apiError := &Error{}
-	err = json.Unmarshal(responseData, apiError)
-	if err == nil && apiError.IsError {
-		return nil, errors.New("Api Error")
-	}
-
 	result := &addTagResult{}
-	err = json.Unmarshal(responseData, &result)
-	if err != nil {
+	if err := parseResponse(response, result); err != nil {
 		return nil, err
 	}
 
@@ -94,20 +68,8 @@ func (c *Client) RemoveTag(fileID uint, tag string) ([]string, error) {
 		return nil, err
 	}
 
-	responseData, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	apiError := &Error{}
-	err = json.Unmarshal(responseData, apiError)
-	if err == nil && apiError.IsError {
-		return nil, errors.New("Api Error")
-	}
-
 	var tags []string
-	err = json.Unmarshal(responseData, &tags)
-	if err != nil {
+	if err := parseResponse(response, &tags); err != nil {
 		return nil, err
 	}
 

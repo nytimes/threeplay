@@ -1,8 +1,6 @@
 package threeplay
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 )
@@ -45,12 +43,9 @@ func (c *Client) GetCaptions(fileID uint, format CaptionsFormat) ([]byte, error)
 		return nil, err
 	}
 
-	apiError := &Error{}
-	json.Unmarshal(responseData, apiError)
-	if apiError.IsError {
-		return nil, errors.New("API Error")
+	if err := checkForAPIError(responseData); err != nil {
+		return nil, err
 	}
-
 	return responseData, nil
 }
 
@@ -69,12 +64,8 @@ func (c *Client) GetCaptionsByVideoID(id string, format CaptionsFormat) ([]byte,
 	if err != nil {
 		return nil, err
 	}
-
-	apiError := &Error{}
-	json.Unmarshal(responseData, apiError)
-	if apiError.IsError {
-		return nil, errors.New("API Error")
+	if err := checkForAPIError(responseData); err != nil {
+		return nil, err
 	}
-
 	return responseData, nil
 }
