@@ -38,7 +38,7 @@ func TestGetTagsAPIError(t *testing.T) {
 	tags, err := client.GetTags(123456)
 	assert.Nil(tags)
 	assert.NotNil(err)
-	assert.Equal("API Error", err.Error())
+	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetTagsError(t *testing.T) {
@@ -91,7 +91,7 @@ func TestAddTagApiError(t *testing.T) {
 	tags, err := client.AddTag(123456, "this-is-a-tag")
 	assert.Nil(tags)
 	assert.NotNil(err)
-	assert.Equal("API Error", err.Error())
+	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestAddTagError(t *testing.T) {
@@ -146,7 +146,7 @@ func TestRemoveTagApiError(t *testing.T) {
 	tags, err := client.RemoveTag(123456, "this-is-a-tag")
 	assert.Nil(tags)
 	assert.NotNil(err)
-	assert.Equal("API Error", err.Error())
+	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestRemoveTagError(t *testing.T) {

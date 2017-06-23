@@ -26,6 +26,11 @@ type Error struct {
 	Errors  map[string]string `json:"errors"`
 }
 
+var (
+	ErrUnauthorized = errors.New("401: API Error")
+	ErrNotFound     = errors.New("404: API Error")
+)
+
 // NewClient returns a 3Play Media client
 func NewClient(apiKey, apiSecret string) *Client {
 	return &Client{
@@ -93,6 +98,13 @@ func checkForAPIError(responseData []byte) error {
 	apiError := Error{}
 	json.Unmarshal(responseData, &apiError)
 	if apiError.IsError {
+		if _, ok := apiError.Errors["authentication"]; ok {
+			return ErrUnauthorized
+		}
+		if _, ok := apiError.Errors["not_found"]; ok {
+			return ErrNotFound
+		}
+
 		return errors.New("API Error")
 	}
 	return nil
