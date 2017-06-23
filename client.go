@@ -27,8 +27,10 @@ type Error struct {
 }
 
 var (
+	// ErrUnauthorized represents a 401 error on API
 	ErrUnauthorized = errors.New("401: API Error")
-	ErrNotFound     = errors.New("404: API Error")
+	// ErrNotFound represents a 404 error on API
+	ErrNotFound = errors.New("404: API Error")
 )
 
 // NewClient returns a 3Play Media client
