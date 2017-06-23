@@ -41,7 +41,7 @@ func TestGetTranscriptWithFormatApiError(t *testing.T) {
 	result, err := client.GetTranscriptWithFormat(123456, threeplay.TXT)
 	assert.Nil(result)
 	assert.NotNil(err)
-	assert.Equal(err.Error(), "API Error")
+	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetTranscript(t *testing.T) {
@@ -74,7 +74,7 @@ func TestGetTranscriptApiError(t *testing.T) {
 	transcript, err := client.GetTranscript(123456)
 	assert.Nil(transcript)
 	assert.NotNil(err)
-	assert.Equal(err.Error(), "API Error")
+	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetTranscriptByVideoID(t *testing.T) {
@@ -109,7 +109,7 @@ func TestGetTranscriptByVideoIDApiError(t *testing.T) {
 	transcript, err := client.GetTranscriptByVideoID("123456")
 	assert.Nil(transcript)
 	assert.NotNil(err)
-	assert.Equal(err.Error(), "API Error")
+	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetTranscriptByVideoIDWithFormat(t *testing.T) {
@@ -146,7 +146,7 @@ func TestGetTranscriptByVideoIDtWithFormatApiError(t *testing.T) {
 	result, err := client.GetTranscriptByVideoIDWithFormat("123456", threeplay.TXT)
 	assert.Nil(result)
 	assert.NotNil(err)
-	assert.Equal(err.Error(), "API Error")
+	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
 }
 
 func ExampleClient_GetTranscriptWithFormat() {

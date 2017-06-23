@@ -38,7 +38,7 @@ func TestGetCaptionsApiError(t *testing.T) {
 	result, err := client.GetCaptions(123456, threeplay.SRT)
 	assert.Nil(result)
 	assert.NotNil(err)
-	assert.Equal(err.Error(), "API Error")
+	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetCaptionsByVideoID(t *testing.T) {
@@ -73,5 +73,5 @@ func TestGetCaptionsByVideoIDApiError(t *testing.T) {
 	result, err := client.GetCaptionsByVideoID("123456", threeplay.SRT)
 	assert.Nil(result)
 	assert.NotNil(err)
-	assert.Equal(err.Error(), "API Error")
+	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
 }

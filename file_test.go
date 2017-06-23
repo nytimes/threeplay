@@ -39,7 +39,7 @@ func TestGetFileAPIError(t *testing.T) {
 	client := threeplay.NewClient("api-key", "secret-key")
 
 	file, err := client.GetFile(123456)
-	assert.Equal(err.Error(), "API Error")
+	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
 	assert.Nil(file)
 }
 
@@ -189,7 +189,8 @@ func TestUpdateFileError(t *testing.T) {
 	err = client.UpdateFile(123456, data)
 
 	assert.NotNil(err)
-	assert.Equal(err.Error(), "API Error")
+	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
+
 }
 
 func TestUploadFileFromURL(t *testing.T) {
