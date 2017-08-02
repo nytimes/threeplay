@@ -107,7 +107,7 @@ func checkForAPIError(responseData []byte) error {
 			return ErrNotFound
 		}
 
-		return errors.New("API Error")
+     return errors.New("API Error: " + string(responseData[:]))
 	}
 	return nil
 }
