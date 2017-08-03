@@ -11,6 +11,8 @@ type CaptionsFormat string
 const (
 	// SRT format for captions file
 	SRT CaptionsFormat = "srt"
+	// WebVTT format for captions file
+	WebVTT CaptionsFormat = "vtt"
 	// DFX format for captions file
 	DFX CaptionsFormat = "pdfxp"
 	// SMI format for captions file
