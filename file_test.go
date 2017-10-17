@@ -231,7 +231,7 @@ func ExampleClient_UploadFileFromURL() {
 	fmt.Println(fileID)
 }
 
-func ExampleUpdateFile() {
+func ExampleClient_UpdateFile() {
 	client := threeplay.NewClient("api-key", "api-secret")
 	data, _ := url.ParseQuery("name=another-name")
 	err := client.UpdateFile(1687446, data)
