@@ -209,8 +209,29 @@ func TestUploadFileFromURL(t *testing.T) {
 	data.Set("video_id", "123456")
 
 	fileID, err := client.UploadFileFromURL("https://somewhere.com/72397_1_08macron-speech_wg_360p.mp4", data)
-	assert.Equal("1686514", fileID)
+	assert.Equal(uint(1686514), fileID)
 	assert.Nil(err)
+}
+
+func TestUploadFileFromURLInvalidResponse(t *testing.T) {
+	assert := assert.New(t)
+
+	defer gock.Off()
+	gock.New("https://api.3playmedia.com").
+		Post("/files").
+		MatchType("url").
+		BodyString("api_secret_key=secret-key&apikey=api-key&link=https%3A%2F%2Fsomewhere.com%2F72397_1_08macron-speech_wg_360p.mp4&video_id=123456").
+		Reply(200).
+		BodyString("<p>Something went wrong, but I still return 200!</p>")
+
+	client := threeplay.NewClient("api-key", "secret-key")
+	data := url.Values{}
+	data.Set("video_id", "123456")
+
+	fileID, err := client.UploadFileFromURL("https://somewhere.com/72397_1_08macron-speech_wg_360p.mp4", data)
+	assert.Equal(uint(0), fileID)
+	assert.NotNil(err)
+	assert.Equal(err.Error(), "invalid response: <p>Something went wrong, but I still return 200!</p>")
 }
 
 func ExampleClient_GetFiles() {
