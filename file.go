@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 // File representation
@@ -109,8 +110,9 @@ func (c *Client) GetFile(id uint) (*File, error) {
 	return file, nil
 }
 
-// UploadFileFromURL uploads a file to threeplay using the file's URL.
-func (c *Client) UploadFileFromURL(fileURL string, options url.Values) (string, error) {
+// UploadFileFromURL uploads a file to threeplay using the file's URL and
+// returns the file ID.
+func (c *Client) UploadFileFromURL(fileURL string, options url.Values) (uint, error) {
 	apiURL := c.createURL("/files")
 	data := url.Values{}
 	data.Set("apikey", c.apiKey)
@@ -121,15 +123,21 @@ func (c *Client) UploadFileFromURL(fileURL string, options url.Values) (string, 
 	}
 	res, err := c.httpClient.PostForm(apiURL.String(), data)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
+	defer res.Body.Close()
 	responseData, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 	err = checkForAPIError(responseData)
 	if err != nil {
-		return "", err
+		return 0, err
 	}
-	return string(responseData), nil
+	fileID, err := strconv.ParseUint(string(responseData), 10, 64)
+	if err != nil {
+		return 0, fmt.Errorf("invalid response: %s", responseData)
+	}
+
+	return uint(fileID), nil
 }
