@@ -8,6 +8,8 @@ import (
 	"net/url"
 	"strings"
 	"time"
+
+	"github.com/sethgrid/pester"
 )
 
 const threePlayHost = "api.3playmedia.com"
@@ -17,7 +19,7 @@ const threePlayStaticHost = "static.3playmedia.com"
 type Client struct {
 	apiKey     string
 	apiSecret  string
-	httpClient *http.Client
+	httpClient *pester.Client
 }
 
 // Error representation of 3Play API error
@@ -35,21 +37,18 @@ var (
 
 // NewClient returns a 3Play Media client
 func NewClient(apiKey, apiSecret string) *Client {
-	return &Client{
-		apiKey:    apiKey,
-		apiSecret: apiSecret,
-		httpClient: &http.Client{
-			Timeout: time.Second * 10,
-		},
-	}
+	return NewClientWithHTTPClient(apiKey, apiSecret, &http.Client{Timeout: 10 * time.Second})
 }
 
 // NewClientWithHTTPClient returns a 3Play Media client with a custom http client
 func NewClientWithHTTPClient(apiKey, apiSecret string, client *http.Client) *Client {
+	httpClient := pester.NewExtendedClient(client)
+	httpClient.MaxRetries = 5
+	httpClient.Backoff = pester.ExponentialJitterBackoff
 	return &Client{
 		apiKey:     apiKey,
 		apiSecret:  apiSecret,
-		httpClient: client,
+		httpClient: httpClient,
 	}
 }
 
