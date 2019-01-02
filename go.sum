@@ -10,5 +10,3 @@ github.com/sethgrid/pester v0.0.0-20180430140037-03e26c9abbbf h1:ftyK7sIzBjxlrIB
 github.com/sethgrid/pester v0.0.0-20180430140037-03e26c9abbbf/go.mod h1:Ad7IjTpvzZO8Fl0vh9AzQ+j/jYZfyp2diGwI8m5q+ns=
 github.com/stretchr/testify v1.2.2 h1:bSDNvY7ZPG5RlJ8otE/7V6gMiyenm9RtJ7IUVIAoJ1w=
 github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
-gopkg.in/h2non/gock.v1 v1.0.12 h1:o3JJqe+h7R9Ay6LtMeFrKz1WnokrJDrNpDQs9KGqVn8=
-gopkg.in/h2non/gock.v1 v1.0.12/go.mod h1:KHI4Z1sxDW6P4N3DfTWSEza07YpkQP7KJBfglRMEjKY=
