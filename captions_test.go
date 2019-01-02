@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/NYTimes/threeplay"
+	"github.com/h2non/gock"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/h2non/gock.v1"
 )
 
 func TestGetCaptions(t *testing.T) {
@@ -64,6 +64,7 @@ func TestGetCaptions(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
+		test := test
 		t.Run(test.name, func(t *testing.T) {
 			assert := assert.New(t)
 			defer gock.Off()
@@ -103,6 +104,7 @@ func TestGetCaptionsApiInvalidOptions(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
+		test := test
 		t.Run(test.name, func(t *testing.T) {
 			assert := assert.New(t)
 			client := threeplay.NewClient("api-key", "secret-key")

@@ -47,7 +47,7 @@ func (c *Client) AddTag(fileID uint, tag string) ([]string, error) {
 		return nil, err
 	}
 
-	if result.Result != true {
+	if !result.Result {
 		return nil, errors.New("Adding Tag Failed")
 	}
 

@@ -64,6 +64,9 @@ func (c *Client) UpdateFile(fileID uint, data url.Values) error {
 		return err
 	}
 	response, err := c.httpClient.Do(req)
+	if err != nil {
+		return err
+	}
 	responseData, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return err
