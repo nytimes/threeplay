@@ -1,17 +1,18 @@
 language: go
 sudo: false
 go:
-- 1.8.x
-- 1.9.x
-- tip
+  - 1.11.x
+  - tip
 install:
-- go get github.com/golang/lint/golint
-- go get -t
-script: golint -set_exit_status && go test -v -coverprofile=coverage.txt -covermode=atomic
-after_success: bash <(curl -s https://codecov.io/bash)
+  - go mod download
+  - go install github.com/golangci/golangci-lint/cmd/golangci-lint
+script:
+  - golint -set_exit_status
+  - go test -v -coverprofile=coverage.txt -covermode=atomic
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+env:
+  - GO111MODULE=on
 matrix:
   allow_failures:
-  - go: tip
-notifications:
-  slack:
-    secure: gko6VWRIcMA+b2jf4mVqF5K+fbaHTvvYpPx7/dmdDMmaVVAP8diPqNQgG8otuPCWXNFf0wHw6aqrNizFCI5sZC5cRlcQg2LeDpJPR02gCr6sqkYL323HbvGcz6ly09Kz20p1Ho9n83rwepkxwe0lwkyQos2KUCJZvDUDmDMrjcsxN2sq4tELTAIz2ZWUIxF/bbNP7RF4MJI/5VT9q8CXAqo6x6HrRR5Vnvo7G8gr5PLlDp2LX9nFofuTfxE29b0B27NzdGhJDMP6HQtnYv8mtvhstnNoasNLNSYE/hAiw4sFfHkUi2DLtuRpQI7PrUww09whN6KliXWsH/YUpn1MujrQfD9jXNlYIR3fa81FfdAhmIjmCxV7YQRQd91sA7JrgNmsCkke6pzcHN0SyXUPXklDdXwqPuOSeWnlgaDrVfXDnf+jWNyWUyNJ5qhlWBnILz1VOH9lMS7YMuFj96XfvmEnQ3D6mEI0P3maFxq7EgMuYpWp5HXTrrDfBX1Hs42l7suUEwHgupGb7y5KDKT78Flsvx4kMCja0wOClppcCW31btGGcGS4kJnJ6yPK31gjiS2m/ZLKYZDDWNiJNNKm88zwgxihd9PCjEAZwEuyWwKchaXSxW+OyINZAKWVHMO+gSVIvcJ+PsOU/np3xoZ+qTBFMlKdd1DeQdS/6wOA1yQ=
+    - go: tip
