@@ -54,7 +54,7 @@ type Summary struct {
 // UpdateFile updates a File metadata
 func (c *Client) UpdateFile(fileID uint, data url.Values) error {
 	if data == nil {
-		return errors.New("Must specify new data")
+		return errors.New("must specify new data")
 	}
 	apiURL := c.createURL(fmt.Sprintf("/files/%d", fileID))
 	data.Set("apikey", c.apiKey)
