@@ -176,7 +176,7 @@ func TestUpdateFileError(t *testing.T) {
 	client := threeplay.NewClient("api-key", "secret-key")
 	err := client.UpdateFile(123456, nil)
 	assert.NotNil(err)
-	assert.Equal(err.Error(), "Must specify new data")
+	assert.Equal(err.Error(), "must specify new data")
 
 	gock.New("https://api.3playmedia.com").
 		Put("/files/123456").
