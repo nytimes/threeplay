@@ -6,7 +6,7 @@ import (
 
 	"github.com/NYTimes/threeplay"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/h2non/gock.v1"
+	gock "gopkg.in/h2non/gock.v1"
 )
 
 func TestGetTranscriptWithFormat(t *testing.T) {
