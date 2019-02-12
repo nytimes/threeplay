@@ -1,4 +1,4 @@
-package threeplay
+package threeplay // import "github.com/NYTimes/threeplay
 
 import (
 	"encoding/json"
