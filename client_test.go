@@ -40,7 +40,11 @@ func TestCheckForAPIError(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			t.Parallel()
 			err := checkForAPIError([]byte(test.input))
-			assert.Equal(t, err, test.expected)
+			if test.expected != nil {
+				assert.Equal(t, err.Error(), test.expected.Error())
+			} else {
+				assert.Nil(t, err)
+			}
 		})
 	}
 }
