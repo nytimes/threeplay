@@ -3,7 +3,7 @@ package threeplay_test
 import (
 	"testing"
 
-	"github.com/NYTimes/threeplay"
+	"github.com/nytimes/threeplay"
 	"github.com/stretchr/testify/assert"
 	gock "gopkg.in/h2non/gock.v1"
 )

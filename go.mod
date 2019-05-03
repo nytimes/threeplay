@@ -1,4 +1,4 @@
-module github.com/NYTimes/threeplay
+module github.com/nytimes/threeplay
 
 go 1.12
 
