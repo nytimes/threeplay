@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/NYTimes/threeplay/common"
+	"github.com/nytimes/threeplay/types"
 )
 
 // TranscriptFormatToID maps a caption format to their 3play code
-var TranscriptFormatToID = map[common.CaptionsFormat]int{
-	common.WebVTT: 139,
-	common.SRT:    7,
+var TranscriptFormatToID = map[types.CaptionsFormat]int{
+	types.WebVTT: 139,
+	types.SRT:    7,
 }
 
 // ThreePlayTranscriptResponse the info response object
@@ -90,7 +90,7 @@ func (c *ClientV3) OrderTranscript(mediaFileID string, callbackURL, turnaroundLe
 // GetTranscriptInfo gets the status of the transcript job
 func (c *ClientV3) GetTranscriptInfo(mediaFileID string) (*TranscriptObjectRepresentation, error) {
 	endpoint := fmt.Sprintf("https://%s/v3/transcripts/%s?api_key=%s",
-		common.ThreePlayHost, mediaFileID, c.apiKey,
+		types.ThreePlayHost, mediaFileID, c.apiKey,
 	)
 
 	res, err := c.httpClient.Get(endpoint)
@@ -109,9 +109,9 @@ func (c *ClientV3) GetTranscriptInfo(mediaFileID string) (*TranscriptObjectRepre
 }
 
 // GetTranscriptText downloads the transcript in the specified format
-func (c *ClientV3) GetTranscriptText(mediaFileID string, offset string, outputFormat common.CaptionsFormat) (string, error) {
+func (c *ClientV3) GetTranscriptText(mediaFileID string, offset string, outputFormat types.CaptionsFormat) (string, error) {
 	endpoint := fmt.Sprintf("https://%s/v3/transcripts/%s/text?api_key=%s&output_format_id=%d",
-		common.ThreePlayHost, mediaFileID, c.apiKey, TranscriptFormatToID[outputFormat],
+		types.ThreePlayHost, mediaFileID, c.apiKey, TranscriptFormatToID[outputFormat],
 	)
 	if offset != "" {
 		endpoint = endpoint + fmt.Sprintf("&offset=%s", offset)

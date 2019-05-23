@@ -9,7 +9,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/NYTimes/threeplay/common"
+	"github.com/nytimes/threeplay/types"
 	"github.com/sethgrid/pester"
 )
 
@@ -51,7 +51,7 @@ func NewClientWithHTTPClient(apiKey string, client *http.Client) *ClientV3 {
 func (c *ClientV3) createURL(endpoint string) url.URL {
 	return url.URL{
 		Scheme: "https",
-		Host:   common.ThreePlayHost,
+		Host:   types.ThreePlayHost,
 		Path:   fmt.Sprintf("/v3%v", endpoint),
 	}
 }

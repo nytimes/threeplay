@@ -1,10 +1,11 @@
 package v3_test
 
 import (
-	"github.com/NYTimes/threeplay/v3"
+	"testing"
+
+	"github.com/nytimes/threeplay/v3"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/h2non/gock.v1"
-	"testing"
 )
 
 func TestOrderTranscript(t *testing.T) {

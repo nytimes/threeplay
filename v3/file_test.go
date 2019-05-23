@@ -1,11 +1,12 @@
 package v3_test
 
 import (
-	"github.com/NYTimes/threeplay/v3"
-	"github.com/stretchr/testify/assert"
-	gock "gopkg.in/h2non/gock.v1"
 	"net/url"
 	"testing"
+
+	"github.com/nytimes/threeplay/v3"
+	"github.com/stretchr/testify/assert"
+	gock "gopkg.in/h2non/gock.v1"
 )
 
 func TestUploadFile(t *testing.T) {

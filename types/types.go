@@ -1,4 +1,4 @@
-package common
+package types
 
 const ThreePlayHost = "api.3playmedia.com"
 const ThreePlayStaticHost = "static.3playmedia.com"

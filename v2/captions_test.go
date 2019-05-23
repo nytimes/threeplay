@@ -1,11 +1,12 @@
 package v2_test
 
 import (
-	"github.com/nytimes/threeplay/common"
+	"testing"
+
+	"github.com/nytimes/threeplay/types"
 	"github.com/nytimes/threeplay/v2"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/h2non/gock.v1"
-	"testing"
 )
 
 func TestGetCaptions(t *testing.T) {
@@ -19,7 +20,7 @@ func TestGetCaptions(t *testing.T) {
 			"with file id and standard format",
 			v2.GetCaptionsOptions{
 				FileID: 123456,
-				Format: common.SRT,
+				Format: types.SRT,
 			},
 			"/files/123456/captions.srt",
 			map[string]string{"apikey": "api-key"},
@@ -37,7 +38,7 @@ func TestGetCaptions(t *testing.T) {
 			"with video id and standard format",
 			v2.GetCaptionsOptions{
 				VideoID: "vid-123",
-				Format:  common.SRT,
+				Format:  types.SRT,
 			},
 			"/files/vid-123/captions.srt",
 			map[string]string{"apikey": "api-key", "usevideoid": "1"},
@@ -56,7 +57,7 @@ func TestGetCaptions(t *testing.T) {
 			v2.GetCaptionsOptions{
 				FileID:       123456,
 				VideoID:      "vid-123",
-				Format:       common.WebVTT,
+				Format:       types.WebVTT,
 				OutputFormat: "42.srt",
 			},
 			"/files/123456/output_formats/42.srt",
@@ -98,7 +99,7 @@ func TestGetCaptionsApiInvalidOptions(t *testing.T) {
 		{
 			"missing id",
 			v2.GetCaptionsOptions{
-				Format:       common.SRT,
+				Format:       types.SRT,
 				OutputFormat: "42.srt",
 			},
 		},
@@ -128,7 +129,7 @@ func TestGetCaptionsApiError(t *testing.T) {
 	client := v2.NewClient("api-key", "secret-key")
 	result, err := client.GetCaptions(v2.GetCaptionsOptions{
 		FileID: 123456,
-		Format: common.SRT,
+		Format: types.SRT,
 	})
 	assert.Nil(result)
 	assert.NotNil(err)
@@ -147,7 +148,7 @@ func TestGetCaptionsByVideoID(t *testing.T) {
 		File("../fixtures/captions.srt")
 
 	client := v2.NewClient("api-key", "secret-key")
-	result, err := client.GetCaptionsByVideoID("123456", common.SRT)
+	result, err := client.GetCaptionsByVideoID("123456", types.SRT)
 	assert.NotNil(result)
 	assert.Nil(err)
 }
@@ -164,7 +165,7 @@ func TestGetCaptionsByVideoIDApiError(t *testing.T) {
 		File("../fixtures/error.json")
 
 	client := v2.NewClient("api-key", "secret-key")
-	result, err := client.GetCaptionsByVideoID("123456", common.SRT)
+	result, err := client.GetCaptionsByVideoID("123456", types.SRT)
 	assert.Nil(result)
 	assert.NotNil(err)
 	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())

@@ -3,15 +3,16 @@ package v2
 import (
 	"errors"
 	"fmt"
-	"github.com/NYTimes/threeplay/common"
 	"io/ioutil"
 	"net/url"
 	"strconv"
+
+	"github.com/nytimes/threeplay/types"
 )
 
 // GetCaptionsByVideoID get captions by video ID with specific format
 // current supported formats are srt, dfxp, smi, stl, qt, qtxml, cptxml, adbe
-func (c *ClientV2) GetCaptionsByVideoID(id string, format common.CaptionsFormat) ([]byte, error) {
+func (c *ClientV2) GetCaptionsByVideoID(id string, format types.CaptionsFormat) ([]byte, error) {
 	return c.GetCaptions(GetCaptionsOptions{
 		VideoID: id,
 		Format:  format,
@@ -32,7 +33,7 @@ type GetCaptionsOptions struct {
 	// Format specifies the standard format that should be used. Please
 	// refer to the constants exported by this package to see the available
 	// formats. This option is mutually exclusive with Outputformat.
-	Format common.CaptionsFormat
+	Format types.CaptionsFormat
 
 	// OutputFormat specifies the custom format that should be used.
 	// This option is mutually exclusive with Format.
@@ -89,5 +90,5 @@ func (c *ClientV2) getEndpoint(opts GetCaptionsOptions) (string, error) {
 		return "", errors.New("cannot determine the endpoint: missing format and custom output format")
 	}
 
-	return fmt.Sprintf("https://%s%s?%s", common.ThreePlayStaticHost, path, params.Encode()), nil
+	return fmt.Sprintf("https://%s%s?%s", types.ThreePlayStaticHost, path, params.Encode()), nil
 }
