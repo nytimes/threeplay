@@ -1,12 +1,12 @@
-package v3 // import "github.com/NYTimes/threeplay
+package v2api // import "github.com/NYTimes/threeplay
 
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/nytimes/threeplay/types"
@@ -14,8 +14,9 @@ import (
 )
 
 // Client 3Play Media API client
-type ClientV3 struct {
+type Client struct {
 	apiKey     string
+	apiSecret  string
 	httpClient *pester.Client
 }
 
@@ -33,27 +34,50 @@ var (
 )
 
 // NewClient returns a 3Play Media client
-func NewClient(apiKey string) *ClientV3 {
-	return NewClientWithHTTPClient(apiKey, &http.Client{Timeout: 10 * time.Second})
+func NewClient(apiKey, apiSecret string) *Client {
+	return NewClientWithHTTPClient(apiKey, apiSecret, &http.Client{Timeout: 10 * time.Second})
 }
 
 // NewClientWithHTTPClient returns a 3Play Media client with a custom http client
-func NewClientWithHTTPClient(apiKey string, client *http.Client) *ClientV3 {
+func NewClientWithHTTPClient(apiKey, apiSecret string, client *http.Client) *Client {
 	httpClient := pester.NewExtendedClient(client)
 	httpClient.MaxRetries = 5
 	httpClient.Backoff = pester.ExponentialJitterBackoff
-	return &ClientV3{
+	return &Client{
 		apiKey:     apiKey,
+		apiSecret:  apiSecret,
 		httpClient: httpClient,
 	}
 }
 
-func (c *ClientV3) createURL(endpoint string) url.URL {
+func (c *Client) createURL(endpoint string) url.URL {
 	return url.URL{
 		Scheme: "https",
 		Host:   types.ThreePlayHost,
-		Path:   fmt.Sprintf("/v3%v", endpoint),
+		Path:   endpoint,
 	}
+}
+
+func (c *Client) prepareURL(u url.URL, querystrings url.Values) string {
+	qs := url.Values{}
+	qs.Set("apikey", c.apiKey)
+	for k, v := range querystrings {
+		qs[k] = v
+	}
+	u.RawQuery = qs.Encode()
+	return u.String()
+}
+
+func (c *Client) createRequest(method, endpoint string, data url.Values) (*http.Request, error) {
+	data.Set("apikey", c.apiKey)
+	data.Set("api_secret_key", c.apiSecret)
+	body := strings.NewReader(data.Encode())
+	req, err := http.NewRequest(method, endpoint, body)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	return req, nil
 }
 
 func parseResponse(res *http.Response, ref interface{}) error {
@@ -66,7 +90,6 @@ func parseResponse(res *http.Response, ref interface{}) error {
 		return err
 	}
 	err = json.Unmarshal(responseData, ref)
-
 	return err
 }
 

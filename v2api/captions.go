@@ -1,4 +1,4 @@
-package v2
+package v2api
 
 import (
 	"errors"
@@ -12,7 +12,7 @@ import (
 
 // GetCaptionsByVideoID get captions by video ID with specific format
 // current supported formats are srt, dfxp, smi, stl, qt, qtxml, cptxml, adbe
-func (c *ClientV2) GetCaptionsByVideoID(id string, format types.CaptionsFormat) ([]byte, error) {
+func (c *Client) GetCaptionsByVideoID(id string, format types.CaptionsFormat) ([]byte, error) {
 	return c.GetCaptions(GetCaptionsOptions{
 		VideoID: id,
 		Format:  format,
@@ -41,7 +41,7 @@ type GetCaptionsOptions struct {
 }
 
 // GetCaptions retrieves caption files according to the given options.
-func (c *ClientV2) GetCaptions(opts GetCaptionsOptions) ([]byte, error) {
+func (c *Client) GetCaptions(opts GetCaptionsOptions) ([]byte, error) {
 	endpoint, err := c.getEndpoint(opts)
 	if err != nil {
 		return nil, err
@@ -63,7 +63,7 @@ func (c *ClientV2) GetCaptions(opts GetCaptionsOptions) ([]byte, error) {
 	return responseData, nil
 }
 
-func (c *ClientV2) getEndpoint(opts GetCaptionsOptions) (string, error) {
+func (c *Client) getEndpoint(opts GetCaptionsOptions) (string, error) {
 	var (
 		id   string
 		path string

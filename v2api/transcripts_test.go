@@ -1,11 +1,11 @@
-package v2_test
+package v2api_test
 
 import (
 	"testing"
 
-	"github.com/nytimes/threeplay/v2"
+	"github.com/nytimes/threeplay/v2api"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/h2non/gock.v1"
+	gock "gopkg.in/h2non/gock.v1"
 )
 
 func TestGetTranscriptWithFormat(t *testing.T) {
@@ -20,8 +20,8 @@ func TestGetTranscriptWithFormat(t *testing.T) {
 		Reply(200).
 		BodyString(expectedResult)
 
-	client := v2.NewClient("api-key", "secret-key")
-	result, err := client.GetTranscriptWithFormat(123456, v2.TXT)
+	client := v2api.NewClient("api-key", "secret-key")
+	result, err := client.GetTranscriptWithFormat(123456, v2api.TXT)
 	assert.Equal(expectedResult, string(result))
 	assert.Nil(err)
 }
@@ -36,11 +36,11 @@ func TestGetTranscriptWithFormatApiError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/error.json")
 
-	client := v2.NewClient("api-key", "secret-key")
-	result, err := client.GetTranscriptWithFormat(123456, v2.TXT)
+	client := v2api.NewClient("api-key", "secret-key")
+	result, err := client.GetTranscriptWithFormat(123456, v2api.TXT)
 	assert.Nil(result)
 	assert.NotNil(err)
-	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2api.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetTranscript(t *testing.T) {
@@ -53,7 +53,7 @@ func TestGetTranscript(t *testing.T) {
 		Reply(200).
 		File("../fixtures/transcript.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	transcript, err := client.GetTranscript(123456)
 	assert.NotNil(transcript)
 	assert.Nil(err)
@@ -69,11 +69,11 @@ func TestGetTranscriptApiError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/error.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	transcript, err := client.GetTranscript(123456)
 	assert.Nil(transcript)
 	assert.NotNil(err)
-	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2api.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetTranscriptByVideoID(t *testing.T) {
@@ -87,7 +87,7 @@ func TestGetTranscriptByVideoID(t *testing.T) {
 		Reply(200).
 		File("../fixtures/transcript.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	transcript, err := client.GetTranscriptByVideoID("123456")
 	assert.NotNil(transcript)
 	assert.Nil(err)
@@ -104,11 +104,11 @@ func TestGetTranscriptByVideoIDApiError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/error.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	transcript, err := client.GetTranscriptByVideoID("123456")
 	assert.Nil(transcript)
 	assert.NotNil(err)
-	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2api.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetTranscriptByVideoIDWithFormat(t *testing.T) {
@@ -124,8 +124,8 @@ func TestGetTranscriptByVideoIDWithFormat(t *testing.T) {
 		Reply(200).
 		BodyString(expectedResult)
 
-	client := v2.NewClient("api-key", "secret-key")
-	result, err := client.GetTranscriptByVideoIDWithFormat("123456", v2.TXT)
+	client := v2api.NewClient("api-key", "secret-key")
+	result, err := client.GetTranscriptByVideoIDWithFormat("123456", v2api.TXT)
 	assert.Equal(expectedResult, string(result))
 	assert.Nil(err)
 }
@@ -141,9 +141,9 @@ func TestGetTranscriptByVideoIDtWithFormatApiError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/error.json")
 
-	client := v2.NewClient("api-key", "secret-key")
-	result, err := client.GetTranscriptByVideoIDWithFormat("123456", v2.TXT)
+	client := v2api.NewClient("api-key", "secret-key")
+	result, err := client.GetTranscriptByVideoIDWithFormat("123456", v2api.TXT)
 	assert.Nil(result)
 	assert.NotNil(err)
-	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2api.ErrUnauthorized.Error(), err.Error())
 }

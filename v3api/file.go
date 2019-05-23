@@ -1,4 +1,4 @@
-package v3
+package v3api
 
 import (
 	"fmt"
@@ -23,7 +23,7 @@ type FileObjectRepresentation struct {
 
 // UploadFileFromURL uploads a file to threeplay using the file's URL and
 // returns the file ID.
-func (c *ClientV3) UploadFileFromURL(options url.Values) (int, error) {
+func (c *Client) UploadFileFromURL(options url.Values) (int, error) {
 	apiURL := c.createURL("/files")
 	data := url.Values{}
 	data.Set("api_key", c.apiKey)

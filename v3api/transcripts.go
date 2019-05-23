@@ -1,4 +1,4 @@
-package v3
+package v3api
 
 import (
 	"fmt"
@@ -59,7 +59,7 @@ type CancelObjectRepresentation struct {
 }
 
 // OrderTranscript orders a transcript generation job
-func (c *ClientV3) OrderTranscript(mediaFileID string, callbackURL, turnaroundLevel string) (*TranscriptObjectRepresentation, error) {
+func (c *Client) OrderTranscript(mediaFileID string, callbackURL, turnaroundLevel string) (*TranscriptObjectRepresentation, error) {
 	var apiURL url.URL
 	data := url.Values{}
 	data.Set("api_key", c.apiKey)
@@ -88,7 +88,7 @@ func (c *ClientV3) OrderTranscript(mediaFileID string, callbackURL, turnaroundLe
 }
 
 // GetTranscriptInfo gets the status of the transcript job
-func (c *ClientV3) GetTranscriptInfo(mediaFileID string) (*TranscriptObjectRepresentation, error) {
+func (c *Client) GetTranscriptInfo(mediaFileID string) (*TranscriptObjectRepresentation, error) {
 	endpoint := fmt.Sprintf("https://%s/v3/transcripts/%s?api_key=%s",
 		types.ThreePlayHost, mediaFileID, c.apiKey,
 	)
@@ -109,7 +109,7 @@ func (c *ClientV3) GetTranscriptInfo(mediaFileID string) (*TranscriptObjectRepre
 }
 
 // GetTranscriptText downloads the transcript in the specified format
-func (c *ClientV3) GetTranscriptText(mediaFileID string, offset string, outputFormat types.CaptionsFormat) (string, error) {
+func (c *Client) GetTranscriptText(mediaFileID string, offset string, outputFormat types.CaptionsFormat) (string, error) {
 	endpoint := fmt.Sprintf("https://%s/v3/transcripts/%s/text?api_key=%s&output_format_id=%d",
 		types.ThreePlayHost, mediaFileID, c.apiKey, TranscriptFormatToID[outputFormat],
 	)
@@ -132,7 +132,7 @@ func (c *ClientV3) GetTranscriptText(mediaFileID string, offset string, outputFo
 }
 
 // CancelTranscript cancels the transcript order if possible
-func (c *ClientV3) CancelTranscript(mediaFileID string) error {
+func (c *Client) CancelTranscript(mediaFileID string) error {
 	apiURL := c.createURL(fmt.Sprintf("/transcripts/%s/cancel", mediaFileID))
 	data := url.Values{}
 	data.Set("api_key", c.apiKey)

@@ -1,9 +1,9 @@
-package v2_test
+package v2api_test
 
 import (
 	"testing"
 
-	"github.com/nytimes/threeplay/v2"
+	"github.com/nytimes/threeplay/v2api"
 	"github.com/stretchr/testify/assert"
 	gock "gopkg.in/h2non/gock.v1"
 )
@@ -18,7 +18,7 @@ func TestGetTags(t *testing.T) {
 		Reply(200).
 		BodyString(`["physics","robots","spycraft"]`)
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	tags, err := client.GetTags(123456)
 	assert.Equal("physics", tags[0])
 	assert.Nil(err)
@@ -34,11 +34,11 @@ func TestGetTagsAPIError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/error.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	tags, err := client.GetTags(123456)
 	assert.Nil(tags)
 	assert.NotNil(err)
-	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2api.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetTagsError(t *testing.T) {
@@ -51,7 +51,7 @@ func TestGetTagsError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/not_json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 
 	tags, err := client.GetTags(123456)
 	assert.NotNil(err)
@@ -68,7 +68,7 @@ func TestAddTag(t *testing.T) {
 		Reply(200).
 		File("../fixtures/add_tag.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 
 	tags, err := client.AddTag(123456, "this-is-a-tag")
 	assert.Nil(err)
@@ -86,12 +86,12 @@ func TestAddTagApiError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/error.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 
 	tags, err := client.AddTag(123456, "this-is-a-tag")
 	assert.Nil(tags)
 	assert.NotNil(err)
-	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2api.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestAddTagError(t *testing.T) {
@@ -104,7 +104,7 @@ func TestAddTagError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/not_json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 
 	tags, err := client.AddTag(123456, "this-is-a-tag")
 	assert.Nil(tags)
@@ -122,7 +122,7 @@ func TestRemoveTag(t *testing.T) {
 		Reply(200).
 		BodyString(`["physics","robots","spycraft"]`)
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 
 	tags, err := client.RemoveTag(123456, "this-is-a-tag")
 	assert.Nil(err)
@@ -141,12 +141,12 @@ func TestRemoveTagApiError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/error.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 
 	tags, err := client.RemoveTag(123456, "this-is-a-tag")
 	assert.Nil(tags)
 	assert.NotNil(err)
-	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2api.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestRemoveTagError(t *testing.T) {
@@ -160,7 +160,7 @@ func TestRemoveTagError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/not_json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 
 	tags, err := client.RemoveTag(123456, "this-is-a-tag")
 	assert.Nil(tags)

@@ -1,10 +1,10 @@
-package v2_test
+package v2api_test
 
 import (
 	"net/url"
 	"testing"
 
-	"github.com/nytimes/threeplay/v2"
+	"github.com/nytimes/threeplay/v2api"
 	"github.com/stretchr/testify/assert"
 	gock "gopkg.in/h2non/gock.v1"
 )
@@ -19,7 +19,7 @@ func TestGetFile(t *testing.T) {
 		Reply(200).
 		File("../fixtures/file.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	file, err := client.GetFile(123456)
 	assert.Equal(file.Name, "72397_1_08macron-speech_wg_360p.mp4")
 	assert.Nil(err)
@@ -35,10 +35,10 @@ func TestGetFileAPIError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/error.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 
 	file, err := client.GetFile(123456)
-	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2api.ErrUnauthorized.Error(), err.Error())
 	assert.Nil(file)
 }
 
@@ -52,7 +52,7 @@ func TestGetFileError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/not_json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 
 	file, err := client.GetFile(123456)
 	assert.NotNil(err)
@@ -69,7 +69,7 @@ func TestGetFiles(t *testing.T) {
 		Reply(200).
 		File("../fixtures/files_page1.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 
 	filesPage, err := client.GetFiles(nil, nil)
 	assert.Nil(err)
@@ -88,7 +88,7 @@ func TestFilterFiles(t *testing.T) {
 		Reply(200).
 		File("../fixtures/files_page1.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 
 	filter := url.Values{
 		"video_id": []string{"123123"},
@@ -113,7 +113,7 @@ func TestFilterFilesWithPagination(t *testing.T) {
 		Reply(200).
 		File("../fixtures/files_page1.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 
 	filter := url.Values{
 		"video_id": []string{"123123"},
@@ -142,7 +142,7 @@ func TestGetFilesWithPagination(t *testing.T) {
 		Reply(200).
 		File("../fixtures/files_page2.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	querystring := url.Values{}
 	querystring.Add("page", "2")
 
@@ -162,7 +162,7 @@ func TestUpdateFile(t *testing.T) {
 		Reply(200).
 		BodyString("1")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	data, _ := url.ParseQuery("name=other-name")
 	err := client.UpdateFile(123456, data)
 	assert.Nil(err)
@@ -172,7 +172,7 @@ func TestUpdateFileError(t *testing.T) {
 	assert := assert.New(t)
 	defer gock.Off()
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	err := client.UpdateFile(123456, nil)
 	assert.NotNil(err)
 	assert.Equal(err.Error(), "must specify new data")
@@ -188,7 +188,7 @@ func TestUpdateFileError(t *testing.T) {
 	err = client.UpdateFile(123456, data)
 
 	assert.NotNil(err)
-	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2api.ErrUnauthorized.Error(), err.Error())
 
 }
 
@@ -203,7 +203,7 @@ func TestUploadFileFromURL(t *testing.T) {
 		Reply(200).
 		BodyString("1686514")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	data := url.Values{}
 	data.Set("video_id", "123456")
 
@@ -223,7 +223,7 @@ func TestUploadFileFromURLInvalidResponse(t *testing.T) {
 		Reply(200).
 		BodyString("<p>Something went wrong, but I still return 200!</p>")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	data := url.Values{}
 	data.Set("video_id", "123456")
 

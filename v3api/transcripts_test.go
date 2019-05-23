@@ -1,11 +1,11 @@
-package v3_test
+package v3api_test
 
 import (
 	"testing"
 
-	"github.com/nytimes/threeplay/v3"
+	"github.com/nytimes/threeplay/v3api"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/h2non/gock.v1"
+	gock "gopkg.in/h2non/gock.v1"
 )
 
 func TestOrderTranscript(t *testing.T) {
@@ -19,7 +19,7 @@ func TestOrderTranscript(t *testing.T) {
 		Reply(200).
 		File("../fixtures/v3_transcript_order_200.json")
 
-	client := v3.NewClient("api-key")
+	client := v3api.NewClient("api-key")
 
 	transcriptData, err := client.OrderTranscript("3628518", "", "asr")
 	assert.Nil(err)
@@ -39,7 +39,7 @@ func TestOrderTranscriptError(t *testing.T) {
 		Reply(404).
 		File("../fixtures/v3_transcript_order_404.json")
 
-	client := v3.NewClient("api-key")
+	client := v3api.NewClient("api-key")
 
 	transcriptData, err := client.OrderTranscript("123456", "", "asr")
 	assert.Empty(transcriptData)
@@ -57,7 +57,7 @@ func TestTranscriptInfo(t *testing.T) {
 		Reply(200).
 		File("../fixtures/v3_transcript_info_complete.json")
 
-	client := v3.NewClient("api-key")
+	client := v3api.NewClient("api-key")
 
 	transcriptData, err := client.GetTranscriptInfo("3633088")
 	assert.Nil(err)
@@ -76,7 +76,7 @@ func TestTranscriptInfoError(t *testing.T) {
 		Reply(500).
 		File("../fixtures/v3_unknown_error.json")
 
-	client := v3.NewClient("api-key")
+	client := v3api.NewClient("api-key")
 
 	transcriptData, err := client.GetTranscriptInfo("123")
 	assert.Empty(transcriptData)
@@ -95,7 +95,7 @@ func TestTranscriptText(t *testing.T) {
 		Reply(200).
 		File("../fixtures/v3_transcript_text.json")
 
-	client := v3.NewClient("api-key")
+	client := v3api.NewClient("api-key")
 
 	transcript, err := client.GetTranscriptText("3633088", "", "vtt")
 	assert.Nil(err)
@@ -114,7 +114,7 @@ func TestTranscriptTextError(t *testing.T) {
 		Reply(500).
 		File("../fixtures/v3_unknown_error.json")
 
-	client := v3.NewClient("api-key")
+	client := v3api.NewClient("api-key")
 
 	transcript, err := client.GetTranscriptText("9846", "", "vtt")
 	assert.Empty(transcript)
@@ -133,7 +133,7 @@ func TestTranscriptCancel(t *testing.T) {
 		Reply(200).
 		File("../fixtures/v3_cancel_200.json")
 
-	client := v3.NewClient("api-key")
+	client := v3api.NewClient("api-key")
 
 	err := client.CancelTranscript("8794567")
 	assert.Nil(err)
@@ -150,7 +150,7 @@ func TestTranscriptCancelError(t *testing.T) {
 		Reply(403).
 		File("../fixtures/v3_cancel_403.json")
 
-	client := v3.NewClient("api-key")
+	client := v3api.NewClient("api-key")
 
 	err := client.CancelTranscript("843759")
 	assert.NotNil(err)

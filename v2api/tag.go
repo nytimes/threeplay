@@ -1,4 +1,4 @@
-package v2
+package v2api
 
 import (
 	"errors"
@@ -9,7 +9,7 @@ import (
 )
 
 // GetTags gets the list of tags of a file
-func (c *ClientV2) GetTags(fileID uint) ([]string, error) {
+func (c *Client) GetTags(fileID uint) ([]string, error) {
 
 	endpoint := fmt.Sprintf("https://%s/files/%d/tags?apikey=%s", types.ThreePlayHost, fileID, c.apiKey)
 	response, err := c.httpClient.Get(endpoint)
@@ -31,7 +31,7 @@ type addTagResult struct {
 }
 
 // AddTag adds a tag to a file
-func (c *ClientV2) AddTag(fileID uint, tag string) ([]string, error) {
+func (c *Client) AddTag(fileID uint, tag string) ([]string, error) {
 	endpoint := fmt.Sprintf("https://%s/files/%d/tags", types.ThreePlayHost, fileID)
 
 	data := url.Values{}
@@ -57,7 +57,7 @@ func (c *ClientV2) AddTag(fileID uint, tag string) ([]string, error) {
 }
 
 // RemoveTag removes a tag of a file
-func (c *ClientV2) RemoveTag(fileID uint, tag string) ([]string, error) {
+func (c *Client) RemoveTag(fileID uint, tag string) ([]string, error) {
 	endpoint := fmt.Sprintf("https://%s/files/%d/tags/%s", types.ThreePlayHost, fileID, tag)
 
 	data := url.Values{}

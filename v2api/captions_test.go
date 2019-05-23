@@ -1,10 +1,10 @@
-package v2_test
+package v2api_test
 
 import (
 	"testing"
 
 	"github.com/nytimes/threeplay/types"
-	"github.com/nytimes/threeplay/v2"
+	"github.com/nytimes/threeplay/v2api"
 	"github.com/stretchr/testify/assert"
 	gock "gopkg.in/h2non/gock.v1"
 )
@@ -12,13 +12,13 @@ import (
 func TestGetCaptions(t *testing.T) {
 	var tests = []struct {
 		name   string
-		opts   v2.GetCaptionsOptions
+		opts   v2api.GetCaptionsOptions
 		path   string
 		params map[string]string
 	}{
 		{
 			"with file id and standard format",
-			v2.GetCaptionsOptions{
+			v2api.GetCaptionsOptions{
 				FileID: 123456,
 				Format: types.SRT,
 			},
@@ -27,7 +27,7 @@ func TestGetCaptions(t *testing.T) {
 		},
 		{
 			"with file id and custom format",
-			v2.GetCaptionsOptions{
+			v2api.GetCaptionsOptions{
 				FileID:       123456,
 				OutputFormat: "42.srt",
 			},
@@ -36,7 +36,7 @@ func TestGetCaptions(t *testing.T) {
 		},
 		{
 			"with video id and standard format",
-			v2.GetCaptionsOptions{
+			v2api.GetCaptionsOptions{
 				VideoID: "vid-123",
 				Format:  types.SRT,
 			},
@@ -45,7 +45,7 @@ func TestGetCaptions(t *testing.T) {
 		},
 		{
 			"with video id and custom format",
-			v2.GetCaptionsOptions{
+			v2api.GetCaptionsOptions{
 				VideoID:      "vid-123",
 				OutputFormat: "42.vtt",
 			},
@@ -54,7 +54,7 @@ func TestGetCaptions(t *testing.T) {
 		},
 		{
 			"with all fields - should prefer custom format && file id",
-			v2.GetCaptionsOptions{
+			v2api.GetCaptionsOptions{
 				FileID:       123456,
 				VideoID:      "vid-123",
 				Format:       types.WebVTT,
@@ -76,7 +76,7 @@ func TestGetCaptions(t *testing.T) {
 				Reply(200).
 				File("../fixtures/captions.srt")
 
-			client := v2.NewClient("api-key", "secret-key")
+			client := v2api.NewClient("api-key", "secret-key")
 			result, err := client.GetCaptions(test.opts)
 			assert.NotNil(result)
 			assert.Nil(err)
@@ -87,18 +87,18 @@ func TestGetCaptions(t *testing.T) {
 func TestGetCaptionsApiInvalidOptions(t *testing.T) {
 	var tests = []struct {
 		name string
-		opts v2.GetCaptionsOptions
+		opts v2api.GetCaptionsOptions
 	}{
 		{
 			"missing format",
-			v2.GetCaptionsOptions{
+			v2api.GetCaptionsOptions{
 				FileID:  10,
 				VideoID: "vid-123",
 			},
 		},
 		{
 			"missing id",
-			v2.GetCaptionsOptions{
+			v2api.GetCaptionsOptions{
 				Format:       types.SRT,
 				OutputFormat: "42.srt",
 			},
@@ -108,7 +108,7 @@ func TestGetCaptionsApiInvalidOptions(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			assert := assert.New(t)
-			client := v2.NewClient("api-key", "secret-key")
+			client := v2api.NewClient("api-key", "secret-key")
 			result, err := client.GetCaptions(test.opts)
 			assert.Nil(result)
 			assert.NotNil(err)
@@ -126,14 +126,14 @@ func TestGetCaptionsApiError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/error.json")
 
-	client := v2.NewClient("api-key", "secret-key")
-	result, err := client.GetCaptions(v2.GetCaptionsOptions{
+	client := v2api.NewClient("api-key", "secret-key")
+	result, err := client.GetCaptions(v2api.GetCaptionsOptions{
 		FileID: 123456,
 		Format: types.SRT,
 	})
 	assert.Nil(result)
 	assert.NotNil(err)
-	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2api.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetCaptionsByVideoID(t *testing.T) {
@@ -147,7 +147,7 @@ func TestGetCaptionsByVideoID(t *testing.T) {
 		Reply(200).
 		File("../fixtures/captions.srt")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	result, err := client.GetCaptionsByVideoID("123456", types.SRT)
 	assert.NotNil(result)
 	assert.Nil(err)
@@ -164,9 +164,9 @@ func TestGetCaptionsByVideoIDApiError(t *testing.T) {
 		Reply(200).
 		File("../fixtures/error.json")
 
-	client := v2.NewClient("api-key", "secret-key")
+	client := v2api.NewClient("api-key", "secret-key")
 	result, err := client.GetCaptionsByVideoID("123456", types.SRT)
 	assert.Nil(result)
 	assert.NotNil(err)
-	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2api.ErrUnauthorized.Error(), err.Error())
 }

@@ -1,4 +1,4 @@
-package v2
+package v2api
 
 import (
 	"encoding/json"
@@ -31,7 +31,7 @@ type Transcript struct {
 }
 
 // GetTranscript get json transcript by file ID
-func (c *ClientV2) GetTranscript(fileID uint) (*Transcript, error) {
+func (c *Client) GetTranscript(fileID uint) (*Transcript, error) {
 	response, err := c.GetTranscriptWithFormat(fileID, JSON)
 	if err != nil {
 		return nil, err
@@ -48,7 +48,7 @@ func (c *ClientV2) GetTranscript(fileID uint) (*Transcript, error) {
 
 // GetTranscriptWithFormat get transcript by file ID with supported formats
 // current supported formats are json, text and html
-func (c *ClientV2) GetTranscriptWithFormat(id uint, format TranscriptFormat) ([]byte, error) {
+func (c *Client) GetTranscriptWithFormat(id uint, format TranscriptFormat) ([]byte, error) {
 	endpoint := fmt.Sprintf("https://%s/files/%d/transcript.%s?apikey=%s",
 		types.ThreePlayStaticHost, id, format, c.apiKey,
 	)
@@ -71,7 +71,7 @@ func (c *ClientV2) GetTranscriptWithFormat(id uint, format TranscriptFormat) ([]
 }
 
 // GetTranscriptByVideoID get json transcript by video ID
-func (c *ClientV2) GetTranscriptByVideoID(videoID string) (*Transcript, error) {
+func (c *Client) GetTranscriptByVideoID(videoID string) (*Transcript, error) {
 
 	response, err := c.GetTranscriptByVideoIDWithFormat(videoID, JSON)
 	if err != nil {
@@ -88,7 +88,7 @@ func (c *ClientV2) GetTranscriptByVideoID(videoID string) (*Transcript, error) {
 
 // GetTranscriptByVideoIDWithFormat get transcript by video ID with specific format
 // current supported formats are json, text and html
-func (c *ClientV2) GetTranscriptByVideoIDWithFormat(id string, format TranscriptFormat) ([]byte, error) {
+func (c *Client) GetTranscriptByVideoIDWithFormat(id string, format TranscriptFormat) ([]byte, error) {
 	endpoint := fmt.Sprintf("https://%s/files/%s/transcript.%s?apikey=%s&usevideoid=1",
 		types.ThreePlayStaticHost, id, format, c.apiKey,
 	)
