@@ -6,7 +6,7 @@ import (
 
 	"github.com/nytimes/threeplay/v2"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/h2non/gock.v1"
+	gock "gopkg.in/h2non/gock.v1"
 )
 
 func TestGetFile(t *testing.T) {

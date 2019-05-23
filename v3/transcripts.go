@@ -114,7 +114,7 @@ func (c *ClientV3) GetTranscriptText(mediaFileID string, offset string, outputFo
 		types.ThreePlayHost, mediaFileID, c.apiKey, TranscriptFormatToID[outputFormat],
 	)
 	if offset != "" {
-		endpoint = endpoint + fmt.Sprintf("&offset=%s", offset)
+		endpoint += fmt.Sprintf("&offset=%s", offset)
 	}
 	res, err := c.httpClient.Get(endpoint)
 	if err != nil {
