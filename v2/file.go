@@ -1,4 +1,4 @@
-package threeplay
+package v2
 
 import (
 	"encoding/json"
@@ -52,7 +52,7 @@ type Summary struct {
 }
 
 // UpdateFile updates a File metadata
-func (c *Client) UpdateFile(fileID uint, data url.Values) error {
+func (c *ClientV2) UpdateFile(fileID uint, data url.Values) error {
 	if data == nil {
 		return errors.New("must specify new data")
 	}
@@ -77,7 +77,7 @@ func (c *Client) UpdateFile(fileID uint, data url.Values) error {
 // GetFiles returns a list of files, supports pagination through params
 // and filters.
 // For a full list of supported filtering parameters check http://support.3playmedia.com/hc/en-us/articles/227729828-Files-API-Methods
-func (c *Client) GetFiles(params, filters url.Values) (*FilesPage, error) {
+func (c *ClientV2) GetFiles(params, filters url.Values) (*FilesPage, error) {
 	querystring := url.Values{}
 	if params != nil {
 		querystring = params
@@ -99,7 +99,7 @@ func (c *Client) GetFiles(params, filters url.Values) (*FilesPage, error) {
 }
 
 // GetFile gets a single file by id
-func (c *Client) GetFile(id uint) (*File, error) {
+func (c *ClientV2) GetFile(id uint) (*File, error) {
 	file := &File{}
 	url := c.createURL(fmt.Sprintf("/files/%d", id))
 	endpoint := c.prepareURL(url, nil)
@@ -115,7 +115,7 @@ func (c *Client) GetFile(id uint) (*File, error) {
 
 // UploadFileFromURL uploads a file to threeplay using the file's URL and
 // returns the file ID.
-func (c *Client) UploadFileFromURL(fileURL string, options url.Values) (uint, error) {
+func (c *ClientV2) UploadFileFromURL(fileURL string, options url.Values) (uint, error) {
 	apiURL := c.createURL("/files")
 	data := url.Values{}
 	data.Set("apikey", c.apiKey)

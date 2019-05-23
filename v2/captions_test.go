@@ -1,32 +1,32 @@
-package threeplay_test
+package v2_test
 
 import (
-	"testing"
-
-	"github.com/nytimes/threeplay"
+	"github.com/nytimes/threeplay/common"
+	"github.com/nytimes/threeplay/v2"
 	"github.com/stretchr/testify/assert"
-	gock "gopkg.in/h2non/gock.v1"
+	"gopkg.in/h2non/gock.v1"
+	"testing"
 )
 
 func TestGetCaptions(t *testing.T) {
 	var tests = []struct {
 		name   string
-		opts   threeplay.GetCaptionsOptions
+		opts   v2.GetCaptionsOptions
 		path   string
 		params map[string]string
 	}{
 		{
 			"with file id and standard format",
-			threeplay.GetCaptionsOptions{
+			v2.GetCaptionsOptions{
 				FileID: 123456,
-				Format: threeplay.SRT,
+				Format: common.SRT,
 			},
 			"/files/123456/captions.srt",
 			map[string]string{"apikey": "api-key"},
 		},
 		{
 			"with file id and custom format",
-			threeplay.GetCaptionsOptions{
+			v2.GetCaptionsOptions{
 				FileID:       123456,
 				OutputFormat: "42.srt",
 			},
@@ -35,16 +35,16 @@ func TestGetCaptions(t *testing.T) {
 		},
 		{
 			"with video id and standard format",
-			threeplay.GetCaptionsOptions{
+			v2.GetCaptionsOptions{
 				VideoID: "vid-123",
-				Format:  threeplay.SRT,
+				Format:  common.SRT,
 			},
 			"/files/vid-123/captions.srt",
 			map[string]string{"apikey": "api-key", "usevideoid": "1"},
 		},
 		{
 			"with video id and custom format",
-			threeplay.GetCaptionsOptions{
+			v2.GetCaptionsOptions{
 				VideoID:      "vid-123",
 				OutputFormat: "42.vtt",
 			},
@@ -53,10 +53,10 @@ func TestGetCaptions(t *testing.T) {
 		},
 		{
 			"with all fields - should prefer custom format && file id",
-			threeplay.GetCaptionsOptions{
+			v2.GetCaptionsOptions{
 				FileID:       123456,
 				VideoID:      "vid-123",
-				Format:       threeplay.WebVTT,
+				Format:       common.WebVTT,
 				OutputFormat: "42.srt",
 			},
 			"/files/123456/output_formats/42.srt",
@@ -73,9 +73,9 @@ func TestGetCaptions(t *testing.T) {
 				Get(test.path).
 				MatchParams(test.params).
 				Reply(200).
-				File("./fixtures/captions.srt")
+				File("../fixtures/captions.srt")
 
-			client := threeplay.NewClient("api-key", "secret-key")
+			client := v2.NewClient("api-key", "secret-key")
 			result, err := client.GetCaptions(test.opts)
 			assert.NotNil(result)
 			assert.Nil(err)
@@ -86,19 +86,19 @@ func TestGetCaptions(t *testing.T) {
 func TestGetCaptionsApiInvalidOptions(t *testing.T) {
 	var tests = []struct {
 		name string
-		opts threeplay.GetCaptionsOptions
+		opts v2.GetCaptionsOptions
 	}{
 		{
 			"missing format",
-			threeplay.GetCaptionsOptions{
+			v2.GetCaptionsOptions{
 				FileID:  10,
 				VideoID: "vid-123",
 			},
 		},
 		{
 			"missing id",
-			threeplay.GetCaptionsOptions{
-				Format:       threeplay.SRT,
+			v2.GetCaptionsOptions{
+				Format:       common.SRT,
 				OutputFormat: "42.srt",
 			},
 		},
@@ -107,7 +107,7 @@ func TestGetCaptionsApiInvalidOptions(t *testing.T) {
 		test := test
 		t.Run(test.name, func(t *testing.T) {
 			assert := assert.New(t)
-			client := threeplay.NewClient("api-key", "secret-key")
+			client := v2.NewClient("api-key", "secret-key")
 			result, err := client.GetCaptions(test.opts)
 			assert.Nil(result)
 			assert.NotNil(err)
@@ -123,16 +123,16 @@ func TestGetCaptionsApiError(t *testing.T) {
 		Get("/files/123456/captions.srt").
 		MatchParam("apikey", "api-key").
 		Reply(200).
-		File("./fixtures/error.json")
+		File("../fixtures/error.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
-	result, err := client.GetCaptions(threeplay.GetCaptionsOptions{
+	client := v2.NewClient("api-key", "secret-key")
+	result, err := client.GetCaptions(v2.GetCaptionsOptions{
 		FileID: 123456,
-		Format: threeplay.SRT,
+		Format: common.SRT,
 	})
 	assert.Nil(result)
 	assert.NotNil(err)
-	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetCaptionsByVideoID(t *testing.T) {
@@ -144,10 +144,10 @@ func TestGetCaptionsByVideoID(t *testing.T) {
 		MatchParam("apikey", "api-key").
 		MatchParam("usevideoid", "1").
 		Reply(200).
-		File("./fixtures/captions.srt")
+		File("../fixtures/captions.srt")
 
-	client := threeplay.NewClient("api-key", "secret-key")
-	result, err := client.GetCaptionsByVideoID("123456", threeplay.SRT)
+	client := v2.NewClient("api-key", "secret-key")
+	result, err := client.GetCaptionsByVideoID("123456", common.SRT)
 	assert.NotNil(result)
 	assert.Nil(err)
 }
@@ -161,11 +161,11 @@ func TestGetCaptionsByVideoIDApiError(t *testing.T) {
 		MatchParam("apikey", "api-key").
 		MatchParam("usevideoid", "1").
 		Reply(200).
-		File("./fixtures/error.json")
+		File("../fixtures/error.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
-	result, err := client.GetCaptionsByVideoID("123456", threeplay.SRT)
+	client := v2.NewClient("api-key", "secret-key")
+	result, err := client.GetCaptionsByVideoID("123456", common.SRT)
 	assert.Nil(result)
 	assert.NotNil(err)
-	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
 }

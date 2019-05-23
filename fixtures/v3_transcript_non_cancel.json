@@ -1,0 +1,17 @@
+{
+  "code":200,
+  "data":{
+    "id":10804997,
+    "media_file_id":3633083,
+    "batch_id":68841,
+    "reference_id":null,
+    "duration":190.827,
+    "default":true,
+    "type":"AsrTranscript",
+    "language_id":1,
+    "language_ids":[1],
+    "status":"in_progress",
+    "cancellable":false
+  },
+  "meta":{}
+}

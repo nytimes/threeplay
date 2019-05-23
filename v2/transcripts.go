@@ -1,8 +1,9 @@
-package threeplay
+package v2
 
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/NYTimes/threeplay/common"
 	"io/ioutil"
 )
 
@@ -29,7 +30,7 @@ type Transcript struct {
 }
 
 // GetTranscript get json transcript by file ID
-func (c *Client) GetTranscript(fileID uint) (*Transcript, error) {
+func (c *ClientV2) GetTranscript(fileID uint) (*Transcript, error) {
 	response, err := c.GetTranscriptWithFormat(fileID, JSON)
 	if err != nil {
 		return nil, err
@@ -46,9 +47,9 @@ func (c *Client) GetTranscript(fileID uint) (*Transcript, error) {
 
 // GetTranscriptWithFormat get transcript by file ID with supported formats
 // current supported formats are json, text and html
-func (c *Client) GetTranscriptWithFormat(id uint, format TranscriptFormat) ([]byte, error) {
+func (c *ClientV2) GetTranscriptWithFormat(id uint, format TranscriptFormat) ([]byte, error) {
 	endpoint := fmt.Sprintf("https://%s/files/%d/transcript.%s?apikey=%s",
-		threePlayStaticHost, id, format, c.apiKey,
+		common.ThreePlayStaticHost, id, format, c.apiKey,
 	)
 
 	response, err := c.httpClient.Get(endpoint)
@@ -69,7 +70,7 @@ func (c *Client) GetTranscriptWithFormat(id uint, format TranscriptFormat) ([]by
 }
 
 // GetTranscriptByVideoID get json transcript by video ID
-func (c *Client) GetTranscriptByVideoID(videoID string) (*Transcript, error) {
+func (c *ClientV2) GetTranscriptByVideoID(videoID string) (*Transcript, error) {
 
 	response, err := c.GetTranscriptByVideoIDWithFormat(videoID, JSON)
 	if err != nil {
@@ -86,9 +87,9 @@ func (c *Client) GetTranscriptByVideoID(videoID string) (*Transcript, error) {
 
 // GetTranscriptByVideoIDWithFormat get transcript by video ID with specific format
 // current supported formats are json, text and html
-func (c *Client) GetTranscriptByVideoIDWithFormat(id string, format TranscriptFormat) ([]byte, error) {
+func (c *ClientV2) GetTranscriptByVideoIDWithFormat(id string, format TranscriptFormat) ([]byte, error) {
 	endpoint := fmt.Sprintf("https://%s/files/%s/transcript.%s?apikey=%s&usevideoid=1",
-		threePlayStaticHost, id, format, c.apiKey,
+		common.ThreePlayStaticHost, id, format, c.apiKey,
 	)
 
 	response, err := c.httpClient.Get(endpoint)

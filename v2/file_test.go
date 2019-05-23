@@ -1,13 +1,12 @@
-package threeplay_test
+package v2_test
 
 import (
-	"fmt"
 	"net/url"
 	"testing"
 
-	"github.com/nytimes/threeplay"
+	"github.com/nytimes/threeplay/v2"
 	"github.com/stretchr/testify/assert"
-	gock "gopkg.in/h2non/gock.v1"
+	"gopkg.in/h2non/gock.v1"
 )
 
 func TestGetFile(t *testing.T) {
@@ -18,9 +17,9 @@ func TestGetFile(t *testing.T) {
 		Get("/files/123456").
 		MatchParam("apikey", "api-key").
 		Reply(200).
-		File("./fixtures/file.json")
+		File("../fixtures/file.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 	file, err := client.GetFile(123456)
 	assert.Equal(file.Name, "72397_1_08macron-speech_wg_360p.mp4")
 	assert.Nil(err)
@@ -34,12 +33,12 @@ func TestGetFileAPIError(t *testing.T) {
 		Get("/files/123456").
 		MatchParam("apikey", "api-key").
 		Reply(200).
-		File("./fixtures/error.json")
+		File("../fixtures/error.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 
 	file, err := client.GetFile(123456)
-	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
 	assert.Nil(file)
 }
 
@@ -51,9 +50,9 @@ func TestGetFileError(t *testing.T) {
 		Get("/files/123456").
 		MatchParam("apikey", "api-key").
 		Reply(200).
-		File("./fixtures/not_json")
+		File("../fixtures/not_json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 
 	file, err := client.GetFile(123456)
 	assert.NotNil(err)
@@ -68,9 +67,9 @@ func TestGetFiles(t *testing.T) {
 		Get("/files").
 		MatchParam("apikey", "api-key").
 		Reply(200).
-		File("./fixtures/files_page1.json")
+		File("../fixtures/files_page1.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 
 	filesPage, err := client.GetFiles(nil, nil)
 	assert.Nil(err)
@@ -87,9 +86,9 @@ func TestFilterFiles(t *testing.T) {
 		MatchParam("apikey", "api-key").
 		MatchParam("q", "state=error&video_id=123123").
 		Reply(200).
-		File("./fixtures/files_page1.json")
+		File("../fixtures/files_page1.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 
 	filter := url.Values{
 		"video_id": []string{"123123"},
@@ -112,9 +111,9 @@ func TestFilterFilesWithPagination(t *testing.T) {
 		MatchParam("per_page", "12").
 		MatchParam("q", "state=error&video_id=123123").
 		Reply(200).
-		File("./fixtures/files_page1.json")
+		File("../fixtures/files_page1.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 
 	filter := url.Values{
 		"video_id": []string{"123123"},
@@ -141,9 +140,9 @@ func TestGetFilesWithPagination(t *testing.T) {
 		MatchParam("apikey", "api-key").
 		MatchParam("page", "2").
 		Reply(200).
-		File("./fixtures/files_page2.json")
+		File("../fixtures/files_page2.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 	querystring := url.Values{}
 	querystring.Add("page", "2")
 
@@ -163,7 +162,7 @@ func TestUpdateFile(t *testing.T) {
 		Reply(200).
 		BodyString("1")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 	data, _ := url.ParseQuery("name=other-name")
 	err := client.UpdateFile(123456, data)
 	assert.Nil(err)
@@ -173,7 +172,7 @@ func TestUpdateFileError(t *testing.T) {
 	assert := assert.New(t)
 	defer gock.Off()
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 	err := client.UpdateFile(123456, nil)
 	assert.NotNil(err)
 	assert.Equal(err.Error(), "must specify new data")
@@ -183,13 +182,13 @@ func TestUpdateFileError(t *testing.T) {
 		MatchType("url").
 		BodyString("api_secret_key=secret-key&apikey=api-key&name=other-name").
 		Reply(200).
-		File("./fixtures/error.json")
+		File("../fixtures/error.json")
 	data, _ := url.ParseQuery("name=other-name")
 
 	err = client.UpdateFile(123456, data)
 
 	assert.NotNil(err)
-	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
 
 }
 
@@ -204,7 +203,7 @@ func TestUploadFileFromURL(t *testing.T) {
 		Reply(200).
 		BodyString("1686514")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 	data := url.Values{}
 	data.Set("video_id", "123456")
 
@@ -224,7 +223,7 @@ func TestUploadFileFromURLInvalidResponse(t *testing.T) {
 		Reply(200).
 		BodyString("<p>Something went wrong, but I still return 200!</p>")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 	data := url.Values{}
 	data.Set("video_id", "123456")
 
@@ -232,31 +231,4 @@ func TestUploadFileFromURLInvalidResponse(t *testing.T) {
 	assert.Equal(uint(0), fileID)
 	assert.NotNil(err)
 	assert.Equal(err.Error(), "invalid response: <p>Something went wrong, but I still return 200!</p>")
-}
-
-func ExampleClient_GetFiles() {
-	client := threeplay.NewClient("api-key", "secret")
-	filesPage, _ := client.GetFiles(nil, nil)
-	fmt.Println(filesPage.Files)
-
-	pagination, _ := url.ParseQuery("page=2&per_page=10")
-
-	filesPage, _ = client.GetFiles(pagination, nil)
-	fmt.Println(filesPage.Files)
-}
-
-func ExampleClient_UploadFileFromURL() {
-	client := threeplay.NewClient("api-key", "secret")
-	data, _ := url.ParseQuery("video_id=123&attribute1=abc")
-	fileID, _ := client.UploadFileFromURL("http://somewhere.com/video.mp4", data)
-	fmt.Println(fileID)
-}
-
-func ExampleClient_UpdateFile() {
-	client := threeplay.NewClient("api-key", "api-secret")
-	data, _ := url.ParseQuery("name=another-name")
-	err := client.UpdateFile(1687446, data)
-	if err != nil {
-		fmt.Println(err)
-	}
 }

@@ -1,4 +1,4 @@
-package threeplay
+package v2
 
 import (
 	"errors"

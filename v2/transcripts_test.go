@@ -1,12 +1,11 @@
-package threeplay_test
+package v2_test
 
 import (
-	"fmt"
 	"testing"
 
-	"github.com/nytimes/threeplay"
+	"github.com/nytimes/threeplay/v2"
 	"github.com/stretchr/testify/assert"
-	gock "gopkg.in/h2non/gock.v1"
+	"gopkg.in/h2non/gock.v1"
 )
 
 func TestGetTranscriptWithFormat(t *testing.T) {
@@ -21,8 +20,8 @@ func TestGetTranscriptWithFormat(t *testing.T) {
 		Reply(200).
 		BodyString(expectedResult)
 
-	client := threeplay.NewClient("api-key", "secret-key")
-	result, err := client.GetTranscriptWithFormat(123456, threeplay.TXT)
+	client := v2.NewClient("api-key", "secret-key")
+	result, err := client.GetTranscriptWithFormat(123456, v2.TXT)
 	assert.Equal(expectedResult, string(result))
 	assert.Nil(err)
 }
@@ -35,13 +34,13 @@ func TestGetTranscriptWithFormatApiError(t *testing.T) {
 		Get("/files/123456/transcript.txt").
 		MatchParam("apikey", "api-key").
 		Reply(200).
-		File("./fixtures/error.json")
+		File("../fixtures/error.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
-	result, err := client.GetTranscriptWithFormat(123456, threeplay.TXT)
+	client := v2.NewClient("api-key", "secret-key")
+	result, err := client.GetTranscriptWithFormat(123456, v2.TXT)
 	assert.Nil(result)
 	assert.NotNil(err)
-	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetTranscript(t *testing.T) {
@@ -52,9 +51,9 @@ func TestGetTranscript(t *testing.T) {
 		Get("/files/123456/transcript.json").
 		MatchParam("apikey", "api-key").
 		Reply(200).
-		File("./fixtures/transcript.json")
+		File("../fixtures/transcript.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 	transcript, err := client.GetTranscript(123456)
 	assert.NotNil(transcript)
 	assert.Nil(err)
@@ -68,13 +67,13 @@ func TestGetTranscriptApiError(t *testing.T) {
 		Get("/files/123456/transcript.json").
 		MatchParam("apikey", "api-key").
 		Reply(200).
-		File("./fixtures/error.json")
+		File("../fixtures/error.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 	transcript, err := client.GetTranscript(123456)
 	assert.Nil(transcript)
 	assert.NotNil(err)
-	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetTranscriptByVideoID(t *testing.T) {
@@ -86,9 +85,9 @@ func TestGetTranscriptByVideoID(t *testing.T) {
 		MatchParam("apikey", "api-key").
 		MatchParam("usevideoid", "1").
 		Reply(200).
-		File("./fixtures/transcript.json")
+		File("../fixtures/transcript.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 	transcript, err := client.GetTranscriptByVideoID("123456")
 	assert.NotNil(transcript)
 	assert.Nil(err)
@@ -103,13 +102,13 @@ func TestGetTranscriptByVideoIDApiError(t *testing.T) {
 		MatchParam("apikey", "api-key").
 		MatchParam("usevideoid", "1").
 		Reply(200).
-		File("./fixtures/error.json")
+		File("../fixtures/error.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
+	client := v2.NewClient("api-key", "secret-key")
 	transcript, err := client.GetTranscriptByVideoID("123456")
 	assert.Nil(transcript)
 	assert.NotNil(err)
-	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
+	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
 }
 
 func TestGetTranscriptByVideoIDWithFormat(t *testing.T) {
@@ -125,8 +124,8 @@ func TestGetTranscriptByVideoIDWithFormat(t *testing.T) {
 		Reply(200).
 		BodyString(expectedResult)
 
-	client := threeplay.NewClient("api-key", "secret-key")
-	result, err := client.GetTranscriptByVideoIDWithFormat("123456", threeplay.TXT)
+	client := v2.NewClient("api-key", "secret-key")
+	result, err := client.GetTranscriptByVideoIDWithFormat("123456", v2.TXT)
 	assert.Equal(expectedResult, string(result))
 	assert.Nil(err)
 }
@@ -140,17 +139,11 @@ func TestGetTranscriptByVideoIDtWithFormatApiError(t *testing.T) {
 		MatchParam("apikey", "api-key").
 		MatchParam("usevideoid", "1").
 		Reply(200).
-		File("./fixtures/error.json")
+		File("../fixtures/error.json")
 
-	client := threeplay.NewClient("api-key", "secret-key")
-	result, err := client.GetTranscriptByVideoIDWithFormat("123456", threeplay.TXT)
+	client := v2.NewClient("api-key", "secret-key")
+	result, err := client.GetTranscriptByVideoIDWithFormat("123456", v2.TXT)
 	assert.Nil(result)
 	assert.NotNil(err)
-	assert.Equal(threeplay.ErrUnauthorized.Error(), err.Error())
-}
-
-func ExampleClient_GetTranscriptWithFormat() {
-	client := threeplay.NewClient("api-key", "secret")
-	transcript, _ := client.GetTranscriptWithFormat(123, threeplay.JSON)
-	fmt.Println(transcript)
+	assert.Equal(v2.ErrUnauthorized.Error(), err.Error())
 }

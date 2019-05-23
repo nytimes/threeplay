@@ -3,7 +3,8 @@ module github.com/nytimes/threeplay
 go 1.12
 
 require (
-	github.com/sethgrid/pester v0.0.0-20180430140037-03e26c9abbbf
+	github.com/sethgrid/pester v0.0.0-20190127155807-68a33a018ad0
+	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.3.0
 	gopkg.in/h2non/gock.v1 v1.0.14
 )
