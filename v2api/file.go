@@ -63,7 +63,7 @@ func (c *Client) UpdateFile(fileID uint, data url.Values) error {
 	if err != nil {
 		return err
 	}
-	response, err := c.httpClient.Do(req)
+	response, err := c.httpClient.Do(req) //nolint:bodyclose
 	if err != nil {
 		return err
 	}
