@@ -1,15 +1,17 @@
-package threeplay
+package v2api
 
 import (
 	"errors"
 	"fmt"
 	"net/url"
+
+	"github.com/nytimes/threeplay/types"
 )
 
 // GetTags gets the list of tags of a file
 func (c *Client) GetTags(fileID uint) ([]string, error) {
 
-	endpoint := fmt.Sprintf("https://%s/files/%d/tags?apikey=%s", threePlayHost, fileID, c.apiKey)
+	endpoint := fmt.Sprintf("https://%s/files/%d/tags?apikey=%s", types.ThreePlayHost, fileID, c.apiKey)
 	response, err := c.httpClient.Get(endpoint)
 	if err != nil {
 		return nil, err
@@ -30,7 +32,7 @@ type addTagResult struct {
 
 // AddTag adds a tag to a file
 func (c *Client) AddTag(fileID uint, tag string) ([]string, error) {
-	endpoint := fmt.Sprintf("https://%s/files/%d/tags", threePlayHost, fileID)
+	endpoint := fmt.Sprintf("https://%s/files/%d/tags", types.ThreePlayHost, fileID)
 
 	data := url.Values{}
 	data.Set("apikey", c.apiKey)
@@ -56,7 +58,7 @@ func (c *Client) AddTag(fileID uint, tag string) ([]string, error) {
 
 // RemoveTag removes a tag of a file
 func (c *Client) RemoveTag(fileID uint, tag string) ([]string, error) {
-	endpoint := fmt.Sprintf("https://%s/files/%d/tags/%s", threePlayHost, fileID, tag)
+	endpoint := fmt.Sprintf("https://%s/files/%d/tags/%s", types.ThreePlayHost, fileID, tag)
 
 	data := url.Values{}
 	data.Set("apikey", c.apiKey)

@@ -1,0 +1,8 @@
+{
+  "code":500,
+  "error":{
+    "type":"standard_error",
+    "message":"Internal server error"
+  },
+  "meta":{}
+}

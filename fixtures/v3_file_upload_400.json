@@ -1,0 +1,9 @@
+{
+  "code":400,
+  "error":{
+    "type":"parameter_error",
+    "message":"Unrecognized parameters supplied: 'bad_param'",
+    "items":["bad_param"]
+  },
+  "meta":{}
+}

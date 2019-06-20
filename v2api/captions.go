@@ -1,4 +1,4 @@
-package threeplay
+package v2api
 
 import (
 	"errors"
@@ -6,35 +6,13 @@ import (
 	"io/ioutil"
 	"net/url"
 	"strconv"
-)
 
-// CaptionsFormat is supported output format for captions
-type CaptionsFormat string
-
-const (
-	// SRT format for captions file
-	SRT CaptionsFormat = "srt"
-	// WebVTT format for captions file
-	WebVTT CaptionsFormat = "vtt"
-	// DFX format for captions file
-	DFX CaptionsFormat = "pdfxp"
-	// SMI format for captions file
-	SMI CaptionsFormat = "smi"
-	// STL format for captions file
-	STL CaptionsFormat = "stl"
-	// QT format for captions file
-	QT CaptionsFormat = "qt"
-	// QTXML format for captions file
-	QTXML CaptionsFormat = "qtxml"
-	// CPTXML format for captions file
-	CPTXML CaptionsFormat = "cptxml"
-	// ADBE format for captions file
-	ADBE CaptionsFormat = "adbe"
+	"github.com/nytimes/threeplay/types"
 )
 
 // GetCaptionsByVideoID get captions by video ID with specific format
 // current supported formats are srt, dfxp, smi, stl, qt, qtxml, cptxml, adbe
-func (c *Client) GetCaptionsByVideoID(id string, format CaptionsFormat) ([]byte, error) {
+func (c *Client) GetCaptionsByVideoID(id string, format types.CaptionsFormat) ([]byte, error) {
 	return c.GetCaptions(GetCaptionsOptions{
 		VideoID: id,
 		Format:  format,
@@ -55,7 +33,7 @@ type GetCaptionsOptions struct {
 	// Format specifies the standard format that should be used. Please
 	// refer to the constants exported by this package to see the available
 	// formats. This option is mutually exclusive with Outputformat.
-	Format CaptionsFormat
+	Format types.CaptionsFormat
 
 	// OutputFormat specifies the custom format that should be used.
 	// This option is mutually exclusive with Format.
@@ -112,5 +90,5 @@ func (c *Client) getEndpoint(opts GetCaptionsOptions) (string, error) {
 		return "", errors.New("cannot determine the endpoint: missing format and custom output format")
 	}
 
-	return fmt.Sprintf("https://%s%s?%s", threePlayStaticHost, path, params.Encode()), nil
+	return fmt.Sprintf("https://%s%s?%s", types.ThreePlayStaticHost, path, params.Encode()), nil
 }

@@ -1,4 +1,4 @@
-package threeplay
+package v3api
 
 import (
 	"errors"

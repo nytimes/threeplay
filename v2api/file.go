@@ -1,4 +1,4 @@
-package threeplay
+package v2api
 
 import (
 	"encoding/json"

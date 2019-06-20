@@ -1,0 +1,7 @@
+{
+  "code":403,
+  "error":{
+    "type":"forbidden_error",
+    "message": "You cannot cancel this transcript at this time."
+  }
+}

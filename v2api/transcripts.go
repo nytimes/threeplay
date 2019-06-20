@@ -1,9 +1,11 @@
-package threeplay
+package v2api
 
 import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+
+	"github.com/nytimes/threeplay/types"
 )
 
 // TranscriptFormat supported output formats for transcripts
@@ -48,7 +50,7 @@ func (c *Client) GetTranscript(fileID uint) (*Transcript, error) {
 // current supported formats are json, text and html
 func (c *Client) GetTranscriptWithFormat(id uint, format TranscriptFormat) ([]byte, error) {
 	endpoint := fmt.Sprintf("https://%s/files/%d/transcript.%s?apikey=%s",
-		threePlayStaticHost, id, format, c.apiKey,
+		types.ThreePlayStaticHost, id, format, c.apiKey,
 	)
 
 	response, err := c.httpClient.Get(endpoint)
@@ -88,7 +90,7 @@ func (c *Client) GetTranscriptByVideoID(videoID string) (*Transcript, error) {
 // current supported formats are json, text and html
 func (c *Client) GetTranscriptByVideoIDWithFormat(id string, format TranscriptFormat) ([]byte, error) {
 	endpoint := fmt.Sprintf("https://%s/files/%s/transcript.%s?apikey=%s&usevideoid=1",
-		threePlayStaticHost, id, format, c.apiKey,
+		types.ThreePlayStaticHost, id, format, c.apiKey,
 	)
 
 	response, err := c.httpClient.Get(endpoint)
