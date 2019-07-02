@@ -156,3 +156,41 @@ func TestTranscriptCancelError(t *testing.T) {
 	assert.NotNil(err)
 	assert.Equal("403: forbidden_error-You cannot cancel this transcript at this time.", err.Error())
 }
+
+func TestTranscriptEditingLink(t *testing.T) {
+	assert := assert.New(t)
+
+	defer gock.Off()
+	gock.New("https://api.3playmedia.com").
+		Get("/v3/transcripts/3633088/expiring_editing_link").
+		MatchParam("api_key", "api-key").
+		MatchParam("hours_until_expiration", "2").
+		Reply(200).
+		File("../fixtures/v3_transcript_link_200.json")
+
+	client := v3api.NewClient("api-key")
+
+	link, err := client.GetEditingLink("3633088", 2)
+	assert.Nil(err)
+	assert.Equal("http://external.3playmedia.com/transcripts/3633088/edit?exp_key=key", link)
+}
+
+func TestTranscriptEditingLinkError(t *testing.T) {
+	assert := assert.New(t)
+
+	defer gock.Off()
+	gock.New("https://api.3playmedia.com").
+		Get("/v3/transcripts/3633088/expiring_editing_link").
+		MatchParam("api_key", "api-key").
+		MatchParam("hours_until_expiration", "2").
+		Persist().
+		Reply(500).
+		File("../fixtures/v3_unknown_error.json")
+
+	client := v3api.NewClient("api-key")
+
+	link, err := client.GetEditingLink("3633088", 2)
+	assert.Empty(link)
+	assert.NotNil(err)
+	assert.Equal("500: standard_error-Internal server error", err.Error())
+}
