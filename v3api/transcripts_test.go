@@ -180,17 +180,16 @@ func TestTranscriptEditingLinkError(t *testing.T) {
 
 	defer gock.Off()
 	gock.New("https://api.3playmedia.com").
-		Get("/v3/transcripts/3633088/expiring_editing_link").
+		Get("/v3/transcripts/bad-id/expiring_editing_link").
 		MatchParam("api_key", "api-key").
 		MatchParam("hours_until_expiration", "2").
-		Persist().
-		Reply(500).
-		File("../fixtures/v3_unknown_error.json")
+		Reply(404).
+		File("../fixtures/v3_transcript_order_404.json")
 
 	client := v3api.NewClient("api-key")
 
-	link, err := client.GetEditingLink("3633088", 2)
+	link, err := client.GetEditingLink("bad-id", 2)
 	assert.Empty(link)
 	assert.NotNil(err)
-	assert.Equal("500: standard_error-Internal server error", err.Error())
+	assert.Equal("404: not_found_error-Not found", err.Error())
 }
