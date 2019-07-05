@@ -6,5 +6,5 @@ require (
 	github.com/sethgrid/pester v0.0.0-20190127155807-68a33a018ad0
 	github.com/stretchr/objx v0.2.0 // indirect
 	github.com/stretchr/testify v1.3.0
-	gopkg.in/h2non/gock.v1 v1.0.14
+	gopkg.in/h2non/gock.v1 v1.0.15
 )
