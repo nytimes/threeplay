@@ -97,7 +97,6 @@ func (c *Client) GetTranscriptInfo(mediaFileID string) (*TranscriptObjectReprese
 	if err != nil {
 		return nil, err
 	}
-
 	response := &ThreePlayTranscriptResponse{}
 	if err := parseResponse(res, response); err != nil {
 		return &TranscriptObjectRepresentation{}, err
@@ -148,4 +147,23 @@ func (c *Client) CancelTranscript(mediaFileID string) error {
 		return fmt.Errorf("%v: %v-%v", response.Code, response.Error.Type, response.Error.Message)
 	}
 	return nil
+}
+
+// GetEditingLink gets an expiring editing link
+func (c *Client) GetEditingLink(mediaFileID string, hoursUntilExpiration int) (string, error) {
+	endpoint := fmt.Sprintf("https://%s/v3/transcripts/%s/expiring_editing_link?api_key=%s&hours_until_expiration=%d",
+		types.ThreePlayHost, mediaFileID, c.apiKey, hoursUntilExpiration,
+	)
+	res, err := c.httpClient.Get(endpoint)
+	if err != nil {
+		return "", err
+	}
+	response := &ThreePlayTranscriptTextResponse{}
+	if err := parseResponse(res, response); err != nil {
+		return "", nil
+	}
+	if response.Code != 200 {
+		return "", fmt.Errorf("%v: %v-%v", response.Code, response.Error.Type, response.Error.Message)
+	}
+	return response.Data, nil
 }
