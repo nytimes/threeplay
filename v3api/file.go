@@ -23,10 +23,11 @@ type FileObjectRepresentation struct {
 
 // UploadFileFromURL uploads a file to threeplay using the file's URL and
 // returns the file ID.
-func (c *Client) UploadFileFromURL(options url.Values) (int, error) {
+func (c *Client) UploadFileFromURL(options url.Values, callParams CallParams) (int, error) {
+	apiKey := c.setAPIKey(callParams.APIKey)
 	apiURL := c.createURL("/files")
 	data := url.Values{}
-	data.Set("api_key", c.apiKey)
+	data.Set("api_key", apiKey)
 	for key, val := range options {
 		data[key] = val
 	}
