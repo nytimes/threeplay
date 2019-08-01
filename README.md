@@ -7,5 +7,5 @@
 ### Running tests
 
 ```
-$ go get -t && go test
+$ go test -v ./...
 ```
