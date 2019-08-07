@@ -1,4 +1,4 @@
-package v3api // import "github.com/NYTimes/threeplay
+package v3api // import "github.com/NYTimes/threeplay/v3api"
 
 import (
 	"encoding/json"

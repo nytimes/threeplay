@@ -21,7 +21,29 @@ func TestOrderTranscript(t *testing.T) {
 
 	client := v3api.NewClient("api-key")
 
-	transcriptData, err := client.OrderTranscript("3628518", "", "asr")
+	callParams := v3api.CallParams{APIKey: ""}
+	transcriptData, err := client.OrderTranscript("3628518", "", "asr", callParams)
+	assert.Nil(err)
+	assert.NotNil(transcriptData)
+	assert.Equal("pending", transcriptData.Status)
+	assert.Equal("AsrTranscript", transcriptData.Type)
+}
+
+func TestOrderTranscriptCustomAPIKey(t *testing.T) {
+	assert := assert.New(t)
+	defer gock.Off()
+
+	gock.New("https://api.3playmedia.com").
+		Post("/v3/transcripts/order/asr").
+		MatchType("url").
+		BodyString("api_key=custom-key&media_file_id=3628518").
+		Reply(200).
+		File("../fixtures/v3_transcript_order_200.json")
+
+	client := v3api.NewClient("api-key")
+
+	callParams := v3api.CallParams{APIKey: "custom-key"}
+	transcriptData, err := client.OrderTranscript("3628518", "", "asr", callParams)
 	assert.Nil(err)
 	assert.NotNil(transcriptData)
 	assert.Equal("pending", transcriptData.Status)
@@ -41,7 +63,8 @@ func TestOrderTranscriptError(t *testing.T) {
 
 	client := v3api.NewClient("api-key")
 
-	transcriptData, err := client.OrderTranscript("123456", "", "asr")
+	callParams := v3api.CallParams{APIKey: ""}
+	transcriptData, err := client.OrderTranscript("123456", "", "asr", callParams)
 	assert.Empty(transcriptData)
 	assert.NotNil(err)
 	assert.Equal("404: not_found_error-Not found", err.Error())
@@ -59,7 +82,8 @@ func TestTranscriptInfo(t *testing.T) {
 
 	client := v3api.NewClient("api-key")
 
-	transcriptData, err := client.GetTranscriptInfo("3633088")
+	callParams := v3api.CallParams{APIKey: ""}
+	transcriptData, err := client.GetTranscriptInfo("3633088", callParams)
 	assert.Nil(err)
 	assert.NotNil(transcriptData)
 	assert.Equal("complete", transcriptData.Status)
@@ -78,7 +102,8 @@ func TestTranscriptInfoError(t *testing.T) {
 
 	client := v3api.NewClient("api-key")
 
-	transcriptData, err := client.GetTranscriptInfo("123")
+	callParams := v3api.CallParams{APIKey: ""}
+	transcriptData, err := client.GetTranscriptInfo("123", callParams)
 	assert.Empty(transcriptData)
 	assert.NotNil(err)
 	assert.Equal("500: standard_error-Internal server error", err.Error())
@@ -97,7 +122,8 @@ func TestTranscriptText(t *testing.T) {
 
 	client := v3api.NewClient("api-key")
 
-	transcript, err := client.GetTranscriptText("3633088", "", "vtt")
+	callParams := v3api.CallParams{APIKey: ""}
+	transcript, err := client.GetTranscriptText("3633088", "", "vtt", callParams)
 	assert.Nil(err)
 	assert.NotEmpty(transcript)
 }
@@ -116,7 +142,8 @@ func TestTranscriptTextError(t *testing.T) {
 
 	client := v3api.NewClient("api-key")
 
-	transcript, err := client.GetTranscriptText("9846", "", "vtt")
+	callParams := v3api.CallParams{APIKey: ""}
+	transcript, err := client.GetTranscriptText("9846", "", "vtt", callParams)
 	assert.Empty(transcript)
 	assert.NotNil(err)
 	assert.Equal("500: standard_error-Internal server error", err.Error())
@@ -135,7 +162,8 @@ func TestTranscriptCancel(t *testing.T) {
 
 	client := v3api.NewClient("api-key")
 
-	err := client.CancelTranscript("8794567")
+	callParams := v3api.CallParams{APIKey: ""}
+	err := client.CancelTranscript("8794567", callParams)
 	assert.Nil(err)
 }
 
@@ -152,7 +180,8 @@ func TestTranscriptCancelError(t *testing.T) {
 
 	client := v3api.NewClient("api-key")
 
-	err := client.CancelTranscript("843759")
+	callParams := v3api.CallParams{APIKey: ""}
+	err := client.CancelTranscript("843759", callParams)
 	assert.NotNil(err)
 	assert.Equal("403: forbidden_error-You cannot cancel this transcript at this time.", err.Error())
 }
@@ -170,7 +199,8 @@ func TestTranscriptEditingLink(t *testing.T) {
 
 	client := v3api.NewClient("api-key")
 
-	link, err := client.GetEditingLink("3633088", 2)
+	callParams := v3api.CallParams{APIKey: ""}
+	link, err := client.GetEditingLink("3633088", 2, callParams)
 	assert.Nil(err)
 	assert.Equal("http://external.3playmedia.com/transcripts/3633088/edit?exp_key=key", link)
 }
@@ -188,7 +218,8 @@ func TestTranscriptEditingLinkError(t *testing.T) {
 
 	client := v3api.NewClient("api-key")
 
-	link, err := client.GetEditingLink("bad-id", 2)
+	callParams := v3api.CallParams{APIKey: ""}
+	link, err := client.GetEditingLink("bad-id", 2, callParams)
 	assert.Empty(link)
 	assert.NotNil(err)
 	assert.Equal("404: not_found_error-Not found", err.Error())

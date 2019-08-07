@@ -58,11 +58,18 @@ type CancelObjectRepresentation struct {
 	Success bool `json:"success"`
 }
 
+// CallParams contains the call params the caller wants to override
+type CallParams struct {
+	APIKey string `json:"api_key"`
+}
+
 // OrderTranscript orders a transcript generation job
-func (c *Client) OrderTranscript(mediaFileID string, callbackURL, turnaroundLevel string) (*TranscriptObjectRepresentation, error) {
+func (c *Client) OrderTranscript(mediaFileID, callbackURL, turnaroundLevel string, callParams CallParams) (*TranscriptObjectRepresentation, error) {
 	var apiURL url.URL
+	apiKey := c.setAPIKey(callParams.APIKey)
 	data := url.Values{}
-	data.Set("api_key", c.apiKey)
+
+	data.Set("api_key", apiKey)
 	data.Set("media_file_id", mediaFileID)
 	if len(callbackURL) > 0 {
 		data.Set("callback", callbackURL)
@@ -88,9 +95,10 @@ func (c *Client) OrderTranscript(mediaFileID string, callbackURL, turnaroundLeve
 }
 
 // GetTranscriptInfo gets the status of the transcript job
-func (c *Client) GetTranscriptInfo(mediaFileID string) (*TranscriptObjectRepresentation, error) {
+func (c *Client) GetTranscriptInfo(mediaFileID string, callParams CallParams) (*TranscriptObjectRepresentation, error) {
+	apiKey := c.setAPIKey(callParams.APIKey)
 	endpoint := fmt.Sprintf("https://%s/v3/transcripts/%s?api_key=%s",
-		types.ThreePlayHost, mediaFileID, c.apiKey,
+		types.ThreePlayHost, mediaFileID, apiKey,
 	)
 
 	res, err := c.httpClient.Get(endpoint)
@@ -108,9 +116,10 @@ func (c *Client) GetTranscriptInfo(mediaFileID string) (*TranscriptObjectReprese
 }
 
 // GetTranscriptText downloads the transcript in the specified format
-func (c *Client) GetTranscriptText(mediaFileID string, offset string, outputFormat types.CaptionsFormat) (string, error) {
+func (c *Client) GetTranscriptText(mediaFileID, offset string, outputFormat types.CaptionsFormat, callParams CallParams) (string, error) {
+	apiKey := c.setAPIKey(callParams.APIKey)
 	endpoint := fmt.Sprintf("https://%s/v3/transcripts/%s/text?api_key=%s&output_format_id=%d",
-		types.ThreePlayHost, mediaFileID, c.apiKey, TranscriptFormatToID[outputFormat],
+		types.ThreePlayHost, mediaFileID, apiKey, TranscriptFormatToID[outputFormat],
 	)
 	if offset != "" {
 		endpoint += fmt.Sprintf("&offset=%s", offset)
@@ -131,10 +140,11 @@ func (c *Client) GetTranscriptText(mediaFileID string, offset string, outputForm
 }
 
 // CancelTranscript cancels the transcript order if possible
-func (c *Client) CancelTranscript(mediaFileID string) error {
+func (c *Client) CancelTranscript(mediaFileID string, callParams CallParams) error {
+	apiKey := c.setAPIKey(callParams.APIKey)
 	apiURL := c.createURL(fmt.Sprintf("/transcripts/%s/cancel", mediaFileID))
 	data := url.Values{}
-	data.Set("api_key", c.apiKey)
+	data.Set("api_key", apiKey)
 	res, err := c.httpClient.PostForm(apiURL.String(), data)
 	if err != nil {
 		return err
@@ -150,9 +160,10 @@ func (c *Client) CancelTranscript(mediaFileID string) error {
 }
 
 // GetEditingLink gets an expiring editing link
-func (c *Client) GetEditingLink(mediaFileID string, hoursUntilExpiration int) (string, error) {
+func (c *Client) GetEditingLink(mediaFileID string, hoursUntilExpiration int, callParams CallParams) (string, error) {
+	apiKey := c.setAPIKey(callParams.APIKey)
 	endpoint := fmt.Sprintf("https://%s/v3/transcripts/%s/expiring_editing_link?api_key=%s&hours_until_expiration=%d",
-		types.ThreePlayHost, mediaFileID, c.apiKey, hoursUntilExpiration,
+		types.ThreePlayHost, mediaFileID, apiKey, hoursUntilExpiration,
 	)
 	res, err := c.httpClient.Get(endpoint)
 	if err != nil {
@@ -166,4 +177,11 @@ func (c *Client) GetEditingLink(mediaFileID string, hoursUntilExpiration int) (s
 		return "", fmt.Errorf("%v: %v-%v", response.Code, response.Error.Type, response.Error.Message)
 	}
 	return response.Data, nil
+}
+
+func (c *Client) setAPIKey(apiKeyParam string) string {
+	if len(apiKeyParam) > 0 {
+		return apiKeyParam
+	}
+	return c.apiKey
 }
