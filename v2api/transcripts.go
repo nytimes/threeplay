@@ -72,7 +72,6 @@ func (c *Client) GetTranscriptWithFormat(id uint, format TranscriptFormat) ([]by
 
 // GetTranscriptByVideoID get json transcript by video ID
 func (c *Client) GetTranscriptByVideoID(videoID string) (*Transcript, error) {
-
 	response, err := c.GetTranscriptByVideoIDWithFormat(videoID, JSON)
 	if err != nil {
 		return nil, err

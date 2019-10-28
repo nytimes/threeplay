@@ -189,7 +189,6 @@ func TestUpdateFileError(t *testing.T) {
 
 	assert.NotNil(err)
 	assert.Equal(v2api.ErrUnauthorized.Error(), err.Error())
-
 }
 
 func TestUploadFileFromURL(t *testing.T) {
