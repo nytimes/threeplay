@@ -10,7 +10,6 @@ import (
 
 // GetTags gets the list of tags of a file
 func (c *Client) GetTags(fileID uint) ([]string, error) {
-
 	endpoint := fmt.Sprintf("https://%s/files/%d/tags?apikey=%s", types.ThreePlayHost, fileID, c.apiKey)
 	response, err := c.httpClient.Get(endpoint)
 	if err != nil {
